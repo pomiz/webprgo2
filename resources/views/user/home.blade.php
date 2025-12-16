@@ -7,6 +7,7 @@
     <title>Ruang Baju</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
     <style>
         body {
@@ -140,6 +141,32 @@
         @endforeach
     </div>
 
+    <!-- Search Results Info -->
+    @if($search)
+        <div class="alert alert-info d-flex justify-content-between align-items-center" role="alert">
+            <div>
+                <i class="bi bi-search me-2"></i>
+                <strong>Hasil pencarian untuk "{{ $search }}":</strong>
+                {{ $products->count() }} produk ditemukan
+            </div>
+            <a href="{{ route('home') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x-circle me-1"></i>Clear
+            </a>
+        </div>
+    @endif
+
+    <!-- Category Filter Info -->
+    @if($category && !$search)
+        <div class="alert alert-secondary" role="alert">
+            <i class="bi bi-funnel me-2"></i>
+            <strong>Kategori:</strong> {{ $category }}
+            <span class="text-muted">({{ $products->count() }} produk)</span>
+            <a href="{{ route('home') }}" class="btn btn-sm btn-outline-secondary ms-2">
+                <i class="bi bi-x-circle me-1"></i>All
+            </a>
+        </div>
+    @endif
+
     <!-- Product List -->
     <div class="row">
         @forelse ($products as $product)
@@ -164,7 +191,22 @@
                 </div>
             </div>
         @empty
-            <p class="text-center text-muted mt-4">Produk tidak ditemukan.</p>
+            <div class="col-12">
+                <div class="text-center mt-5">
+                    <i class="bi bi-search display-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">
+                        @if($search)
+                            Produk dengan keyword "{{ $search }}" tidak ditemukan.
+                        @else
+                            Produk tidak ditemukan di kategori "{{ $category }}".
+                        @endif
+                    </h4>
+                    <p class="text-muted">Coba dengan keyword lain atau lihat semua produk.</p>
+                    <a href="{{ route('home') }}" class="btn btn-primary">
+                        <i class="bi bi-house me-2"></i>Lihat Semua Produk
+                    </a>
+                </div>
+            </div>
         @endforelse
     </div>
 
