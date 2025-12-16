@@ -75,9 +75,6 @@ Aplikasi e-commerce modern untuk toko baju online "Ruang Baju" yang menjual fash
 |--------|-------|-------|-------------------------|
 | `index(Request $request)` | `GET /` | Homepage dengan product listing & filter kategori | `Product::select('category')->distinct()->pluck('category')` + `Product::when($category)->latest()->get()` |
 | `show($id)` | `GET /product/{id}` | Detail produk | `Product::findOrFail($id)` dengan auto 404 handling |
-| `addToCart($id)` | `GET /add-to-cart/{id}` | Tambah ke keranjang (session-based) | Session cart dengan quantity increment logic |
-| `cart()` | `GET /cart` | Lihat keranjang | `session()->get('cart', [])` retrieval |
-| `removeFromCart($id)` | `GET /remove-from-cart/{id}` | Hapus dari keranjang | `unset($cart[$id])` dengan session update |
 
 **Session Cart Structure:**
 ```php
@@ -166,9 +163,6 @@ Aplikasi e-commerce modern untuk toko baju online "Ruang Baju" yang menjual fash
 ```php
 GET /                    → UserController@index (Homepage)
 GET /product/{id}        → UserController@show (Detail)
-GET /cart                → UserController@cart (Keranjang)
-GET /add-to-cart/{id}    → UserController@addToCart
-GET /remove-from-cart/{id} → UserController@removeFromCart
 ```
 
 ### **Protected Routes (Auth Required)**
@@ -196,17 +190,11 @@ POST /logout             → AuthenticatedSessionController@destroy
    - Search functionality
    - Latest products sorting
 
-2. **Shopping Cart**
-   - Session-based cart (no database dependency)
-   - Quantity management
-   - Add/remove items
-   - Cart persistence during session
-
-3. **Order Integration**
+2. **Order Integration**
    - WhatsApp direct ordering: `+62895359586490`
    - Auto-generated WhatsApp message with product details
 
-4. **User Experience**
+3. **User Experience**
    - Dark mode toggle
    - Responsive mobile design
    - Bootstrap 5 + Tailwind CSS styling
@@ -235,7 +223,6 @@ POST /logout             → AuthenticatedSessionController@destroy
 - **Role-Based Access:** Admin-only areas
 
 ### **Session Management**
-- **Cart Storage:** Laravel Session (`session()->get('cart')`)
 - **Session Security:** Regeneration on authentication
 - **Session Invalidation:** On account deletion
 
