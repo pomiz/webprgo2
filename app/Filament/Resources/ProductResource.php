@@ -28,7 +28,7 @@ class ProductResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                // 🟢 Tambahan kategori produk
+         
                 Forms\Components\Select::make('category')
                     ->label('Kategori')
                     ->options([
