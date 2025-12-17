@@ -7,20 +7,30 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    // ✅ Halaman utama user (list produk + filter kategori)
+    // ✅ Halaman utama user (list produk + filter kategori + search)
     public function index(Request $request)
     {
         // Ambil semua kategori unik dari produk
         $categories = Product::select('category')->distinct()->pluck('category');
 
-        // Filter kategori kalau ada di query
+        // Ambil parameter dari query string
         $category = $request->query('category');
+        $search = $request->query('search');
+
+        // Query produk dengan filter kategori dan search
         $products = Product::when($category, function ($query, $category) {
             return $query->where('category', $category);
+        })->when($search, function ($query, $search) {
+            // Search di multiple fields: name, description, category
+            return $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('description', 'LIKE', '%' . $search . '%')
+                  ->orWhere('category', 'LIKE', '%' . $search . '%');
+            });
         })->latest()->get();
 
         // Kirim ke view
-        return view('user.home', compact('products', 'categories', 'category'));
+        return view('user.home', compact('products', 'categories', 'category', 'search'));
     }
 
     // ✅ Detail produk
