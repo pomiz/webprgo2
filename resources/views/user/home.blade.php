@@ -109,8 +109,19 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold m-0">🛍️ Ruang Baju</h3>
-        <button id="darkModeToggle" class="btn btn-sm btn-dark rounded-pill px-3">☀️ / 🌙</button>
+        <div class="d-flex align-items-center gap-3">
+        <span class="fw-semibold">
+            Halo, {{ auth()->user()->username }}
+        </span>
+
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
+                Logout
+            </button>
+        </form>
     </div>
+</div>
 
     <!-- Hero -->
     <div class="hero mb-5">
@@ -169,21 +180,5 @@
     </div>
 
 </div>
-
-<script>
-    const body = document.body;
-    const toggle = document.getElementById('darkModeToggle');
-    const savedTheme = localStorage.getItem('theme');
-
-    if (savedTheme === 'dark') body.classList.add('dark-mode');
-
-    toggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        localStorage.setItem('theme',
-            body.classList.contains('dark-mode') ? 'dark' : 'light'
-        );
-    });
-</script>
-
 </body>
 </html>

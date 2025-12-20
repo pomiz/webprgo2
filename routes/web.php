@@ -13,28 +13,23 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
-// 🏠 Halaman utama (daftar produk + kategori)
-Route::get('/', [UserController::class, 'index'])->name('home');
+// 🌟 WELCOME PAGE (PUBLIC)
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
 
-// 🛍️ Detail produk
-Route::get('/product/{id}', [UserController::class, 'show'])->name('product.detail');
-
-// 🛒 Fitur keranjang
-Route::get('/cart', [UserController::class, 'cart'])->name('cart.view');
-Route::get('/add-to-cart/{id}', [UserController::class, 'addToCart'])->name('cart.add');
-Route::get('/remove-from-cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
-
-// 📋 Dashboard (hanya untuk admin login)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// 👤 Route profile bawaan auth
+// 🛍️ SHOP (WAJIB LOGIN)
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/product', [UserController::class, 'index'])->name('home');
+
+    Route::get('/product/{id}', [UserController::class, 'show'])->name('product.detail');
+
+    Route::get('/cart', [UserController::class, 'cart'])->name('cart.view');
+    Route::get('/add-to-cart/{id}', [UserController::class, 'addToCart'])->name('cart.add');
+    Route::get('/remove-from-cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
+
 });
 
-require __DIR__.'/auth.php';
-// End of file
+// 🔐 Breeze auth routes
+require __DIR__.'/auth.php';// End of file

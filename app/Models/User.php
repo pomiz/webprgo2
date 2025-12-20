@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
         'role',
@@ -26,6 +26,7 @@ class User extends Authenticatable
        public function canAccessFilament(): bool
     {
         return $this->role === 'admin';
+        return true; // nanti bisa diganti role / permission
     }
 
 }
