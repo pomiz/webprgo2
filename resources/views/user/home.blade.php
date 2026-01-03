@@ -99,6 +99,45 @@
             inset: 0;
             background: rgba(0,0,0,0.55);
         }
+
+        /* Floating Cart Button */
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #000;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-decoration: none;
+            transition: .25s;
+            z-index: 1000;
+        }
+        .floating-cart-btn:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -156,7 +195,7 @@
         @forelse ($products as $product)
             <div class="col-md-4 mb-4">
                 <div class="product-card">
-                    <img src="{{ $product->image }}"
+                    <img src="{{ asset('storage/' . $product->image) }}"
                          class="product-img"
                          alt="{{ $product->name }}"
                          onerror="this.src='https://via.placeholder.com/400x400?text=No+Image';">
@@ -180,5 +219,16 @@
     </div>
 
 </div>
+
+<!-- Floating Cart Button -->
+<a href="{{ route('cart.index') }}" class="floating-cart-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
+        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+    @if(count(session('cart', [])) > 0)
+        <span class="cart-count">{{ count(session('cart', [])) }}</span>
+    @endif
+</a>
+
 </body>
 </html>

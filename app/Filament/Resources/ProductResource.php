@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\FileUpload;
 
 class ProductResource extends Resource
 {
@@ -58,12 +59,12 @@ class ProductResource extends Resource
                     ->default(0)
                     ->required(),
 
-                Forms\Components\TextInput::make('image')
+                FileUpload::make('image')
                     ->label('Gambar Produk')
-                    ->url()
-                    ->placeholder('http://gambar disini')
-                    ->required()
-                    
+                    ->image()
+                    ->directory('product-images')
+                    ->required(),
+                
             ]);
     }
 

@@ -13,14 +13,31 @@ class UserController extends Controller
         // Ambil semua kategori unik dari produk
         $categories = Product::select('category')->distinct()->pluck('category');
 
-        // Filter kategori kalau ada di query
+        // Ambil input dari query string
         $category = $request->query('category');
-        $products = Product::when($category, function ($query, $category) {
-            return $query->where('category', $category);
-        })->latest()->get();
+        $search = $request->query('search');
 
-        // Kirim ke view
-        return view('user.home', compact('products', 'categories', 'category'));
+        // Buat query dasar
+        $productsQuery = Product::query();
+
+        // Terapkan filter kategori jika ada
+        $productsQuery->when($category, function ($query, $category) {
+            return $query->where('category', $category);
+        });
+
+        // Terapkan filter pencarian jika ada
+        $productsQuery->when($search, function ($query, $search) {
+            return $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        });
+
+        // Ambil hasil query yang sudah difilter
+        $products = $productsQuery->latest()->get();
+
+        // Kirim data ke view
+        return view('user.home', compact('products', 'categories', 'category', 'search'));
     }
 
     // ✅ Detail produk
@@ -29,8 +46,14 @@ class UserController extends Controller
         // Ambil produk berdasarkan ID
         $product = Product::findOrFail($id);
 
+        // Ambil produk sebelumnya (ID lebih kecil)
+        $previous = Product::where('id', '<', $product->id)->orderBy('id', 'desc')->first();
+
+        // Ambil produk selanjutnya (ID lebih besar)
+        $next = Product::where('id', '>', $product->id)->orderBy('id', 'asc')->first();
+
         // Kirim ke view user.detail
-        return view('user.detail', compact('product'));
+        return view('user.detail', compact('product', 'previous', 'next'));
     }
 
     // ✅ Tambah ke keranjang (pakai session)

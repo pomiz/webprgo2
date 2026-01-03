@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,9 +27,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/product/{id}', [UserController::class, 'show'])->name('product.detail');
 
-    Route::get('/cart', [UserController::class, 'cart'])->name('cart.view');
-    Route::get('/add-to-cart/{id}', [UserController::class, 'addToCart'])->name('cart.add');
-    Route::get('/remove-from-cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
+    // Cart routes
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{product}', [CartController::class, 'update'])->name('cart.update');
+    Route::get('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+
+    // Checkout route
+    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+    Route::get('/invoice/{order}', [CheckoutController::class, 'invoice'])->name('invoice.show');
 
 });
 
