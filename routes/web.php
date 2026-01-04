@@ -1,9 +1,10 @@
 <?php
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-
+use App\Models\Produk;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,5 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::get('/print/product', function () {
+    $produk = Product::all();
+    return view('print.product', compact('produk'));
+})->name('print.product');
 // End of file
