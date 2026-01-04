@@ -24,6 +24,14 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+        <!-- register -->
+        <div class="flex items-center justify-center mt-4">
+        <a href="{{ route('register') }}"
+        class="text-sm text-blue-600 hover:underline">
+        Belum punya akun? Register
+        </a>
+        </div>
+
         <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
