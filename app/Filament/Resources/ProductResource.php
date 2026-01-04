@@ -63,7 +63,9 @@ class ProductResource extends Resource
                 FileUpload::make('image')
                     ->label('Gambar Produk')
                     ->image()
-                    ->directory('product-images')
+                    ->disk('public')
+                    ->directory('products') // Ubah ke folder 'products'
+                    ->visibility('public')
                     ->required(),
                 
             ]);
@@ -75,6 +77,7 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Gambar')
+                    ->disk('public') // Ambil dari disk public
                     ->circular(),
 
                 Tables\Columns\TextColumn::make('name')
@@ -101,11 +104,11 @@ class ProductResource extends Resource
                     ->sortable(),
             ])
             ->headerActions([
-    Action::make('print')
-        ->label('Print')
-        ->icon('heroicon-o-printer')
-        ->url(route('print.product'), shouldOpenInNewTab: true),
-])
+                Tables\Actions\Action::make('print')
+                    ->label('Print')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn (): string => route('print.product'), shouldOpenInNewTab: true),
+            ])
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),

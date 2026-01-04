@@ -1,10 +1,11 @@
 <?php
 
-use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Admin\ProductPrintController;
+use App\Http\Controllers\Admin\UserPrintController;
 use App\Http\Controllers\CheckoutController;
 
 /*
@@ -16,29 +17,47 @@ use App\Http\Controllers\CheckoutController;
 |
 */
 
-// 🌟 WELCOME PAGE (PUBLIC)
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+// Group Route yang Wajib Login (Auth)
+Route::middleware(['auth'])->group(function () {
 
-// 🛍️ SHOP (WAJIB LOGIN)
-Route::middleware('auth')->group(function () {
+    // 🏠 Halaman utama - Cek role admin atau user biasa
+    Route::get('/', function () {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('filament.admin.pages.dashboard');
+        }
+        return app(App\Http\Controllers\UserController::class)->index(request());
+    })->name('home');
 
-    Route::get('/product', [UserController::class, 'index'])->name('home');
-
+    // 🛍️ Detail produk
     Route::get('/product/{id}', [UserController::class, 'show'])->name('product.detail');
 
-    // Cart routes
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update/{product}', [CartController::class, 'update'])->name('cart.update');
-    Route::get('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+    // 📦 Product list
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
-    // Checkout route
+    // 🛒 Fitur keranjang
+    Route::get('/cart', [UserController::class, 'cart'])->name('cart.index');
+    Route::post('/add-to-cart/{id}', [UserController::class, 'addToCart'])->name('cart.add');
+    Route::get('/remove-from-cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
+
+    // 💳 Checkout
     Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
     Route::get('/invoice/{order}', [CheckoutController::class, 'invoice'])->name('invoice.show');
 
+    // 👤 Route profile bawaan auth
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// 📋 Dashboard (hanya untuk admin login)
+Route::middleware(['auth', 'admin.only'])->group(function () {
+    Route::get('/dashboard', function () {
+        return redirect()->route('filament.admin.pages.dashboard');
+    })->name('dashboard');
+
+    Route::get('/print/products', ProductPrintController::class)->name('print.product');
+    Route::get('/print/users', UserPrintController::class)->name('print.user');
 });
 
 // 🔐 Breeze auth routes
-require __DIR__.'/auth.php';// End of file
+require __DIR__.'/auth.php';

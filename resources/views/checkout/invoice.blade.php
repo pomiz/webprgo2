@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Pesanan #{{ $order->id }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -96,23 +97,59 @@
             font-weight: 700;
             font-size: 18px;
         }
+        
+        /* Buttons */
         .footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
-        .btn-home {
-            display: inline-block;
-            padding: 12px 20px;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
             font-size: 15px;
             border-radius: 10px;
             font-weight: 600;
-            background: black;
-            color: white;
             text-decoration: none;
             transition: .25s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-home {
+            background: black;
+            color: white;
         }
         .btn-home:hover {
             opacity: .85;
+            color: white;
+        }
+        .btn-print {
+            background: white;
+            color: black;
+            border: 2px solid black;
+        }
+        .btn-print:hover {
+            background: #f1f1f1;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .invoice-container {
+                box-shadow: none;
+                max-width: 100%;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -167,8 +204,14 @@
         </table>
     </div>
 
-    <div class="footer">
-        <a href="{{ route('home') }}" class="btn-home">Kembali ke Beranda</a>
+    <!-- Tombol tidak akan muncul saat diprint karena class no-print -->
+    <div class="footer no-print">
+        <button onclick="window.print()" class="btn btn-print">
+            <i class="bi bi-printer me-2" style="margin-right:8px;"></i> Cetak / Simpan PDF
+        </button>
+        <a href="{{ route('home') }}" class="btn btn-home">
+            Kembali ke Beranda
+        </a>
     </div>
 </div>
 

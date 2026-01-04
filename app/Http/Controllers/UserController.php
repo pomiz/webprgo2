@@ -57,20 +57,22 @@ class UserController extends Controller
     }
 
     // ✅ Tambah ke keranjang (pakai session)
-    public function addToCart($id)
+    public function addToCart(Request $request, $id)
     {
         $product = Product::findOrFail($id);
+        $quantity = (int) $request->input('quantity', 1);
+        if ($quantity < 1) $quantity = 1;
 
         // Ambil cart dari session, kalau belum ada buat array kosong
         $cart = session()->get('cart', []);
 
         // Cek apakah produk sudah ada di keranjang
         if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
+            $cart[$id]['quantity'] += $quantity;
         } else {
             $cart[$id] = [
                 "name" => $product->name,
-                "quantity" => 1,
+                "quantity" => $quantity,
                 "price" => $product->price,
                 "image" => $product->image,
             ];

@@ -146,23 +146,22 @@
 
 <div class="container py-4">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold m-0">🛍️ Ruang Baju</h3>
-        <div class="d-flex align-items-center gap-3">
-        <span class="fw-semibold">
-            Halo, {{ auth()->user()->username }}
-        </span>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
-                Logout
-            </button>
-        </form>
-    </div>
-</div>
-
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold m-0">🛍️ Ruang Baju</h3>
+            <div class="d-flex align-items-center gap-3">
+                <span class="fw-semibold">
+                    Halo, {{ auth()->user()->username }}
+                </span>
+    
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
     <!-- Hero -->
     <div class="hero mb-5">
         <div class="hero-overlay"></div>
