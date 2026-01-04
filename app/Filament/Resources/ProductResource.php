@@ -19,7 +19,8 @@ class ProductResource extends Resource
     protected static ?string $navigationLabel = 'Produk';
     protected static ?string $navigationGroup = 'Manajemen Toko';
     protected static ?string $pluralModelLabel = 'Produk';
-
+    protected static ?int $navigationSort = 1;
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -29,7 +30,7 @@ class ProductResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                // 🟢 Tambahan kategori produk
+         
                 Forms\Components\Select::make('category')
                     ->label('Kategori')
                     ->options([
@@ -99,6 +100,12 @@ class ProductResource extends Resource
                     ->dateTime('d M Y, H:i')
                     ->sortable(),
             ])
+            ->headerActions([
+    Action::make('print')
+        ->label('Print')
+        ->icon('heroicon-o-printer')
+        ->url(route('print.product'), shouldOpenInNewTab: true),
+])
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),

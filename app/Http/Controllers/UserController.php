@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    // ✅ Halaman utama user (list produk + filter kategori)
+    // ✅ Halaman utama user (list produk + filter kategori + search)
     public function index(Request $request)
     {
         // Ambil semua kategori unik dari produk
