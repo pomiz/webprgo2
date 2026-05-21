@@ -3,11 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 use App\Models\User;
-use App\Models\Order;
-use App\Models\OrderItem;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,28 +12,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Nonaktifkan foreign key constraints
-        Schema::disableForeignKeyConstraints();
-
-        // Truncate tabel untuk reset data
-        User::truncate();
-        Order::truncate();
-        OrderItem::truncate();
-
-        // Aktifkan kembali foreign key constraints
-        Schema::enableForeignKeyConstraints();
-
-        // Buat 1 user admin
+        // Admin user
         User::factory()->create([
+            'username' => 'ipul',
             'name' => 'Admin Ipul',
-            'username' => 'ipuladmin',
             'email' => 'ipul@tokobaju.com',
-            'password' => Hash::make('ipul12345'),
+            'password' => 'ipul12345',
             'role' => 'admin',
         ]);
 
-        // Jalankan seeder produk
+        // Regular user
+        User::factory()->create([
+            'username' => 'faruq',
+            'name' => 'Faruq',
+            'email' => 'faruq@tokobaju.com',
+            'password' => 'faruq1234',
+            'role' => 'user',
+        ]);
+
+        // Seed locations and products
         $this->call([
+            LocationSeeder::class,
             ProductSeeder::class,
         ]);
     }
