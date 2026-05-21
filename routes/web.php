@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserPrintController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\Auth\SocialAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +73,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/print/products', ProductPrintController::class)->name('print.product');
     Route::get('/print/users', UserPrintController::class)->name('print.user');
 });
+
+// Social Auth routes (accessible by guests)
+Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 
 // 🔐 Breeze auth routes
 require __DIR__.'/auth.php';
