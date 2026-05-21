@@ -36,7 +36,10 @@ class UserController extends Controller
         });
 
         // Ambil hasil query yang sudah difilter
-        $products = $productsQuery->latest()->get();
+        $products = $productsQuery->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->get();
 
         // Kirim data ke view
         return view('user.home', compact('products', 'categories', 'category', 'search'));

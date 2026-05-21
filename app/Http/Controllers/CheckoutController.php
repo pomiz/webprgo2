@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\CartItem;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\UserAddress;
-use App\Services\ShippingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -91,7 +89,16 @@ class CheckoutController extends Controller
             $subtotal += $item->product->price * $item->quantity;
         }
 
-        $shippingCost = (float) $request->shipping_cost;
+        // Recalculate shipping cost server-side (don't trust client value)
+        $shippingCost = 0;
+        if ($request->latitude && $request->longitude) {
+            $shippingService = new \App\Services\ShippingService();
+            $shippingResult = $shippingService->calculateShippingCost(
+                (float) $request->latitude,
+                (float) $request->longitude
+            );
+            $shippingCost = $shippingResult['error'] ? 0 : $shippingResult['cost'];
+        }
         $totalPrice = $subtotal + $shippingCost;
 
         $order = null;
@@ -116,7 +123,16 @@ class CheckoutController extends Controller
                     'price' => $item->product->price,
                 ]);
 
-                $item->product->decrement('stock', $item->quantity);
+                // Atomic stock decrement with guard against negative stock
+                $affected = \App\Models\Product::where('id', $item->product_id)
+                    ->where('stock', '>=', $item->quantity)
+                    ->decrement('stock', $item->quantity);
+
+                if (!$affected) {
+                    DB::rollBack();
+                    return redirect()->route('cart.index')
+                        ->with('error', 'Stok untuk produk ' . $item->product->name . ' tidak mencukupi.');
+                }
             }
 
             // Remove checked-out items from cart
@@ -127,12 +143,14 @@ class CheckoutController extends Controller
             // Save address for future use
             UserAddress::where('user_id', auth()->id())->update(['is_default' => false]);
             UserAddress::updateOrCreate(
-                ['user_id' => auth()->id(), 'is_default' => true],
+                [
+                    'user_id' => auth()->id(),
+                    'province' => $request->input('province'),
+                    'city' => $request->input('city'),
+                ],
                 [
                     'latitude' => $request->latitude,
                     'longitude' => $request->longitude,
-                    'province' => $request->input('province'),
-                    'city' => $request->input('city'),
                     'full_address' => $request->shipping_address,
                     'is_default' => true,
                 ]

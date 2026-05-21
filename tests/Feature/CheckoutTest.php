@@ -110,8 +110,9 @@ test('user can complete checkout and order is created', function () {
     $order = Order::where('user_id', $user->id)->first();
     expect($order)->not->toBeNull();
     expect((float) $order->subtotal)->toBe(150000.00);
-    expect((float) $order->shipping_cost)->toBe(15000.00);
-    expect((float) $order->total_price)->toBe(165000.00);
+    // Shipping cost is calculated server-side from coordinates
+    expect((float) $order->shipping_cost)->toBeGreaterThan(0);
+    expect((float) $order->total_price)->toBe((float) $order->subtotal + (float) $order->shipping_cost);
     expect($order->status)->toBe('pending_payment');
 
     // Cart should be empty

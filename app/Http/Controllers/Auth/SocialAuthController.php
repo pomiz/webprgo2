@@ -10,8 +10,14 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
 {
+    private const ALLOWED_PROVIDERS = ['google'];
+
     public function redirect(string $provider)
     {
+        if (!in_array($provider, self::ALLOWED_PROVIDERS)) {
+            abort(404);
+        }
+
         if (!$this->isProviderConfigured($provider)) {
             return redirect()->route('login')
                 ->with('error', 'Login dengan ' . ucfirst($provider) . ' belum tersedia.');
@@ -22,6 +28,10 @@ class SocialAuthController extends Controller
 
     public function callback(string $provider)
     {
+        if (!in_array($provider, self::ALLOWED_PROVIDERS)) {
+            abort(404);
+        }
+
         if (!$this->isProviderConfigured($provider)) {
             return redirect()->route('login')
                 ->with('error', 'Login dengan ' . ucfirst($provider) . ' belum tersedia.');

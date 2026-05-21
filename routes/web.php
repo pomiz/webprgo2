@@ -67,14 +67,14 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/product/{product}/review', [ReviewController::class, 'destroy'])->name('review.destroy');
 });
 
-// These routes need auth protection
+// These routes need auth + admin protection
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect()->route('filament.admin.pages.dashboard');
     })->name('dashboard');
 
-    Route::get('/print/products', ProductPrintController::class)->name('print.product');
-    Route::get('/print/users', UserPrintController::class)->name('print.user');
+    Route::get('/print/products', ProductPrintController::class)->name('print.product')->middleware('can:admin');
+    Route::get('/print/users', UserPrintController::class)->name('print.user')->middleware('can:admin');
 });
 
 // Social Auth routes (accessible by guests)

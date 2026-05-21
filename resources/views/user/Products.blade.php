@@ -21,6 +21,12 @@
                     <span class="inline-block text-xs font-medium text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 px-2.5 py-1 rounded-md mb-2">
                         {{ $product->category }}
                     </span>
+                    @if($product->reviews_count > 0)
+                        <div class="flex items-center gap-1 mb-1">
+                            <x-star-rating :rating="$product->reviews_avg_rating ?? 0" size="w-3.5 h-3.5" />
+                            <span class="text-xs text-gray-500 dark:text-gray-400">({{ $product->reviews_count }})</span>
+                        </div>
+                    @endif
                     <h3 class="font-serif font-semibold text-lg text-gray-900 dark:text-white mb-1">{{ $product->name }}</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">{{ Str::limit($product->description, 65) }}</p>
                     <div class="flex items-center justify-between">

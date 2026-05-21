@@ -31,13 +31,17 @@
                         {{ $order->created_at->format('d M Y, H:i') }}
                     </p>
                     <div class="mt-2">
-                        @if($order->status === 'paid')
+                        @if(in_array($order->status, ['confirmed', 'processing', 'shipped', 'completed']))
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-                                Lunas
+                                {{ $order->status_label }}
+                            </span>
+                        @elseif($order->status === 'cancelled')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                                {{ $order->status_label }}
                             </span>
                         @else
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
-                                Menunggu Pembayaran
+                                {{ $order->status_label }}
                             </span>
                         @endif
                     </div>
