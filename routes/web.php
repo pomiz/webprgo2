@@ -15,71 +15,64 @@ use App\Http\Controllers\Auth\SocialAuthController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Semua route utama aplikasi toko baju online
-|
 */
 
-// Group Route yang Wajib Login (Auth)
+// Authenticated routes
 Route::middleware(['auth'])->group(function () {
 
-    // 🏠 Halaman utama - Cek role admin atau user biasa
+    // Home
     Route::get('/', function () {
         if (auth()->user()->role === 'admin') {
             return redirect()->route('filament.admin.pages.dashboard');
         }
-        return app(App\Http\Controllers\UserController::class)->index(request());
+        return app(UserController::class)->index(request());
     })->name('home');
 
-    // 🛍️ Detail produk
+    Route::redirect('/dashboard', '/admin')->name('dashboard');
+
+    // Products
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/product/{id}', [UserController::class, 'show'])->name('product.detail');
 
-    // 📦 Product list
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
-    // 🛒 Fitur keranjang
+    // Cart
     Route::get('/cart', [UserController::class, 'cart'])->name('cart.index');
     Route::post('/add-to-cart/{id}', [UserController::class, 'addToCart'])->name('cart.add');
     Route::delete('/cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
 
-    // 💳 Checkout
+    // Checkout
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.process');
     Route::get('/invoice/{order}', [CheckoutController::class, 'invoice'])->name('invoice.show');
 
-    // 👤 Route profile bawaan auth
+    // Orders
+    Route::get('/orders', [UserController::class, 'orders'])->name('orders.index');
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // 📋 Order history
-    Route::get('/orders', [UserController::class, 'orders'])->name('orders.index');
-
-    // Shipping routes
+    // Shipping
     Route::get('/shipping/provinces', [ShippingController::class, 'getProvinces'])->name('shipping.provinces');
     Route::get('/shipping/cities', [ShippingController::class, 'getCities'])->name('shipping.cities');
     Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
     Route::post('/shipping/save-address', [ShippingController::class, 'saveAddress'])->name('shipping.save-address');
 
-    // Review routes
+    // Reviews
     Route::post('/product/{product}/review', [ReviewController::class, 'store'])->name('review.store');
     Route::delete('/product/{product}/review', [ReviewController::class, 'destroy'])->name('review.destroy');
+
+    // Admin-only routes
+    Route::middleware(['can:admin'])->group(function () {
+        Route::get('/print/products', ProductPrintController::class)->name('print.products');
+        Route::get('/print/users', UserPrintController::class)->name('print.users');
+    });
 });
 
-// These routes need auth + admin protection
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return redirect()->route('filament.admin.pages.dashboard');
-    })->name('dashboard');
-
-    Route::get('/print/products', ProductPrintController::class)->name('print.product')->middleware('can:admin');
-    Route::get('/print/users', UserPrintController::class)->name('print.user')->middleware('can:admin');
-});
-
-// Social Auth routes (accessible by guests)
+// Social Auth (guests)
 Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 
-// 🔐 Breeze auth routes
+// Breeze auth routes
 require __DIR__.'/auth.php';
