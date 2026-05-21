@@ -41,7 +41,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
 
     // 💳 Checkout
-    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
+    Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.process');
     Route::get('/invoice/{order}', [CheckoutController::class, 'invoice'])->name('invoice.show');
 
     // 👤 Route profile bawaan auth

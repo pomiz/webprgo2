@@ -72,11 +72,11 @@
             <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
-                    <span class="text-sm font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm text-gray-600 dark:text-gray-400">Ongkir</span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">-</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
                     <span class="font-semibold text-gray-900 dark:text-white">Total</span>
@@ -90,6 +90,12 @@
                 <p class="text-lg font-bold text-brand-900 dark:text-brand-200 font-mono tracking-wider">{{ $order->virtual_account }}</p>
                 <p class="text-xs text-brand-600 dark:text-brand-400 mt-1">Gunakan nomor ini untuk melakukan pembayaran</p>
             </div>
+
+            @if($order->shipping_address)
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <span class="font-medium">Alamat Pengiriman:</span> {{ $order->shipping_address }}
+            </div>
+            @endif
         </div>
 
         {{-- Back Button --}}
