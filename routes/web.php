@@ -37,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
     // 🛒 Fitur keranjang
     Route::get('/cart', [UserController::class, 'cart'])->name('cart.index');
     Route::post('/add-to-cart/{id}', [UserController::class, 'addToCart'])->name('cart.add');
-    Route::get('/remove-from-cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
+    Route::delete('/cart/{id}', [UserController::class, 'removeFromCart'])->name('cart.remove');
 
     // 💳 Checkout
     Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');

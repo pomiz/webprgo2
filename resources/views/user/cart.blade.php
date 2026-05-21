@@ -82,9 +82,13 @@
                         </div>
                         <div class="cart-item-quantity">x {{ $details['quantity'] }}</div>
                         
-                        <a href="{{ route('cart.remove', $id) }}" class="btn-remove" title="Hapus item" onclick="return confirm('Anda yakin ingin menghapus item ini dari keranjang?')">
-                            <i class="bi bi-trash"></i> Hapus
-                        </a>
+                        <form action="{{ route('cart.remove', $id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-remove" title="Hapus item" onclick="return confirm('Anda yakin ingin menghapus item ini dari keranjang?')">
+                                <i class="bi bi-trash"></i> Hapus
+                            </button>
+                        </form>
                     </div>
                 @endforeach
             </form>
