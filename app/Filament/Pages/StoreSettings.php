@@ -8,6 +8,8 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -57,20 +59,22 @@ class StoreSettings extends Page
                         Select::make('store_province')
                             ->label('Provinsi')
                             ->options(fn () => Location::select('province')->distinct()->orderBy('province')->pluck('province', 'province'))
-                            ->reactive()
-                            ->afterStateUpdated(fn (callable $set) => $set('store_city', null)),
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('store_city', null)),
 
                         Select::make('store_city')
                             ->label('Kota')
-                            ->options(function (callable $get) {
+                            ->options(function (Get $get) {
                                 $province = $get('store_province');
                                 if (!$province) return [];
                                 return Location::where('province', $province)
                                     ->orderBy('city')
                                     ->pluck('city', 'city');
                             })
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $get, callable $set) {
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(function (Get $get, Set $set) {
                                 $city = $get('store_city');
                                 $province = $get('store_province');
                                 if ($city && $province) {
