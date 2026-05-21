@@ -89,15 +89,11 @@ class StoreSettings extends Page
                             }),
 
                         TextInput::make('store_latitude')
-                            ->label('Latitude')
-                            ->numeric()
-                            ->step(0.0000001),
+                            ->hidden(),
 
                         TextInput::make('store_longitude')
-                            ->label('Longitude')
-                            ->numeric()
-                            ->step(0.0000001),
-                    ])->columns(2),
+                            ->hidden(),
+                    ]),
 
                 Section::make('Tarif Ongkir')
                     ->description('Konfigurasi biaya pengiriman')
