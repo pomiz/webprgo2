@@ -44,17 +44,16 @@ class UserController extends Controller
     // ✅ Detail produk
     public function show($id)
     {
-        // Ambil produk berdasarkan ID
-        $product = Product::findOrFail($id);
-
-        // Ambil produk sebelumnya (ID lebih kecil)
+        $product = Product::with(['reviews.user'])->findOrFail($id);
         $previous = Product::where('id', '<', $product->id)->orderBy('id', 'desc')->first();
-
-        // Ambil produk selanjutnya (ID lebih besar)
         $next = Product::where('id', '>', $product->id)->orderBy('id', 'asc')->first();
 
-        // Kirim ke view user.detail
-        return view('user.detail', compact('product', 'previous', 'next'));
+        $existingReview = null;
+        if (auth()->check()) {
+            $existingReview = $product->reviews->where('user_id', auth()->id())->first();
+        }
+
+        return view('user.detail', compact('product', 'previous', 'next', 'existingReview'));
     }
 
     // ✅ Tambah ke keranjang (database-backed)

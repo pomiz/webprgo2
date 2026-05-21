@@ -112,10 +112,36 @@
         @endif
     </div>
 
-    {{-- Reviews Section Placeholder --}}
+    {{-- Reviews Section --}}
     <section class="mt-12" id="reviews">
-        <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-white mb-6">Review</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Belum ada review untuk produk ini.</p>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-white">
+                Review ({{ $product->reviewCount() }})
+            </h2>
+            @if($product->reviewCount() > 0)
+                <div class="flex items-center gap-2">
+                    <x-star-rating :rating="$product->averageRating()" size="w-5 h-5" />
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        {{ $product->averageRating() }}/5
+                    </span>
+                </div>
+            @endif
+        </div>
+
+        {{-- Review Form --}}
+        @auth
+            <div class="mb-8">
+                <x-review-form :product="$product" :existingReview="$existingReview" />
+            </div>
+        @else
+            <div class="bg-gray-50 dark:bg-surface-800 rounded-xl p-6 text-center mb-8">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Login untuk memberikan review</p>
+                <a href="{{ route('login') }}" class="btn-primary text-sm inline-block">Login</a>
+            </div>
+        @endauth
+
+        {{-- Review List --}}
+        <x-review-list :reviews="$product->reviews->sortByDesc('created_at')" />
     </section>
 
     {{-- Quantity JS --}}
