@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
+use App\Http\Requests\CheckoutRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,13 +16,10 @@ class CheckoutController extends Controller
     /**
      * Handle the checkout process, create order, and redirect to invoice.
      */
-    public function checkout(Request $request)
+    public function checkout(CheckoutRequest $request)
     {
         // 1. Validasi & Ambil Data
-        $selectedProductIds = $request->input('selected_products');
-        if (empty($selectedProductIds)) {
-            return redirect()->route('cart.index')->with('error', 'Tidak ada produk yang dipilih untuk checkout.');
-        }
+        $selectedProductIds = $request->validated()['selected_products'];
 
         $cartItems = CartItem::where('user_id', auth()->id())
             ->whereIn('product_id', $selectedProductIds)
