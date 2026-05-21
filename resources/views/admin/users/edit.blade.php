@@ -1,268 +1,152 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User - Admin Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .form-control, .form-select {
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-weight: 600;
-        }
-
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0 auto 1rem;
-        }
-
-        .alert {
-            border-radius: 12px;
-            border: none;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-
-<body>
+<body class="min-h-screen bg-gray-50 font-sans antialiased">
 
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
-            <i class="bi bi-shield-lock me-2"></i>Admin Panel
-        </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard') }}">
-                        <i class="bi bi-speedometer2 me-1"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.users.index') }}">
-                        <i class="bi bi-people me-1"></i>User Management
-                    </a>
-                </li>
-            </ul>
-            
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle me-1"></i>{{ auth()->user()->name }}
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<nav class="bg-gradient-to-r from-indigo-600 to-purple-700 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <a href="{{ route('dashboard') }}" class="text-white font-bold text-lg">
+                Admin Panel
+            </a>
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-white py-3">
-                    <div class="d-flex align-items-center">
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-secondary me-3">
-                            <i class="bi bi-arrow-left"></i>
-                        </a>
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-person-gear me-2"></i>Edit User
-                        </h5>
-                    </div>
-                </div>
-                
-                <div class="card-body">
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="{{ route('dashboard') }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Dashboard</a>
+                <a href="{{ route('admin.users.index') }}" class="text-white text-sm font-medium">User Management</a>
+            </div>
 
-                    <!-- User Avatar -->
-                    <div class="text-center mb-4">
-                        <div class="user-avatar">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                        </div>
-                        <h4 class="fw-bold">{{ $user->name }}</h4>
-                        <p class="text-muted">{{ $user->email }}</p>
-                    </div>
-
-                    <form method="POST" action="{{ route('admin.users.update', $user) }}">
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open" class="text-white/90 hover:text-white text-sm font-medium flex items-center space-x-1">
+                    <span>{{ auth()->user()->name }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        @method('PUT')
-
-                        <!-- Name -->
-                        <div class="mb-3">
-                            <label for="name" class="form-label fw-semibold">
-                                <i class="bi bi-person me-1"></i>Nama Lengkap
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="name" 
-                                   name="name" 
-                                   value="{{ old('name', $user->name) }}" 
-                                   required>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-semibold">
-                                <i class="bi bi-envelope me-1"></i>Email Address
-                            </label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   value="{{ old('email', $user->email) }}" 
-                                   required>
-                        </div>
-
-                        <!-- Role -->
-                        <div class="mb-3">
-                            <label for="role" class="form-label fw-semibold">
-                                <i class="bi bi-shield me-1"></i>Role
-                            </label>
-                            <select class="form-select" id="role" name="role" required>
-                                <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>
-                                    User
-                                </option>
-                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>
-                                    Admin
-                                </option>
-                            </select>
-                            <div class="form-text">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Admin dapat mengakses panel administrasi dan mengelola users
-                            </div>
-                        </div>
-
-                        <!-- Password -->
-                        <div class="mb-4">
-                            <label for="password" class="form-label fw-semibold">
-                                <i class="bi bi-lock me-1"></i>Password Baru
-                            </label>
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="password" 
-                                   name="password" 
-                                   placeholder="Kosongkan jika tidak ingin mengubah password">
-                            <div class="form-text">
-                                Minimal 8 karakter. Kosongkan untuk tetap menggunakan password lama.
-                            </div>
-                        </div>
-
-                        <!-- Password Confirmation -->
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="form-label fw-semibold">
-                                <i class="bi bi-lock-fill me-1"></i>Konfirmasi Password Baru
-                            </label>
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="password_confirmation" 
-                                   name="password_confirmation" 
-                                   placeholder="Ulangi password baru">
-                        </div>
-
-                        <!-- Warning for self-edit -->
-                        @if($user->id === auth()->id())
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Perhatian:</strong> Anda sedang mengedit akun sendiri. 
-                                Perubahan role akan berlaku setelah login ulang.
-                            </div>
-                        @endif
-
-                        <!-- Buttons -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-lg me-1"></i>Batal
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-lg me-1"></i>Simpan Perubahan
-                            </button>
-                        </div>
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Logout</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</nav>
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+            <a href="{{ route('admin.users.index') }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </a>
+            <h1 class="text-lg font-bold text-gray-900">Edit User</h1>
+        </div>
+
+        <div class="p-6">
+            @if($errors->any())
+                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- User Avatar -->
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-2xl font-bold mb-3">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ $user->name }}</h2>
+                <p class="text-sm text-gray-500">{{ $user->email }}</p>
+            </div>
+
+            <form method="POST" action="{{ route('admin.users.update', $user) }}">
+                @csrf
+                @method('PUT')
+
+                <!-- Name -->
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text"
+                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                           id="name"
+                           name="name"
+                           value="{{ old('name', $user->name) }}"
+                           required>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+                    <input type="email"
+                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                           id="email"
+                           name="email"
+                           value="{{ old('email', $user->email) }}"
+                           required>
+                </div>
+
+                <!-- Role -->
+                <div class="mb-4">
+                    <label for="role" class="block text-sm font-semibold text-gray-700 mb-1">Role</label>
+                    <select class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                            id="role" name="role" required>
+                        <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
+                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Admin dapat mengakses panel administrasi dan mengelola users</p>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Password Baru</label>
+                    <input type="password"
+                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                           id="password"
+                           name="password"
+                           placeholder="Kosongkan jika tidak ingin mengubah password">
+                    <p class="mt-1 text-xs text-gray-500">Minimal 8 karakter. Kosongkan untuk tetap menggunakan password lama.</p>
+                </div>
+
+                <!-- Password Confirmation -->
+                <div class="mb-6">
+                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-1">Konfirmasi Password Baru</label>
+                    <input type="password"
+                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                           id="password_confirmation"
+                           name="password_confirmation"
+                           placeholder="Ulangi password baru">
+                </div>
+
+                <!-- Warning for self-edit -->
+                @if($user->id === auth()->id())
+                    <div class="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
+                        <strong>Perhatian:</strong> Anda sedang mengedit akun sendiri. Perubahan role akan berlaku setelah login ulang.
+                    </div>
+                @endif
+
+                <!-- Buttons -->
+                <div class="flex items-center justify-between">
+                    <a href="{{ route('admin.users.index') }}"
+                       class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                        Batal
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-xl shadow-md hover:shadow-lg transition-all">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
