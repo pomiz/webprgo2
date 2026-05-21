@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
+        $this->command->info('User admin (ipul@tokobaju.com) ready.');
 
         // Regular user
         User::firstOrCreate(
@@ -33,6 +34,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'user',
             ]
         );
+        $this->command->info('User (faruq@tokobaju.com) ready.');
 
         // Seed locations and products
         $this->call([
