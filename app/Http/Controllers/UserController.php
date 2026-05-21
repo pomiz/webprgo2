@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -97,5 +98,16 @@ class UserController extends Controller
             ->delete();
 
         return redirect()->back()->with('success', 'Produk dihapus dari keranjang.');
+    }
+
+    // ✅ Halaman riwayat pesanan
+    public function orders()
+    {
+        $orders = Order::where('user_id', auth()->id())
+            ->with('items.product')
+            ->latest()
+            ->get();
+
+        return view('user.orders', compact('orders'));
     }
 }

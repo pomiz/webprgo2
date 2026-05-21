@@ -112,7 +112,7 @@ test('user can complete checkout and order is created', function () {
     expect((float) $order->subtotal)->toBe(150000.00);
     expect((float) $order->shipping_cost)->toBe(15000.00);
     expect((float) $order->total_price)->toBe(165000.00);
-    expect($order->status)->toBe('pending');
+    expect($order->status)->toBe('pending_payment');
 
     // Cart should be empty
     $this->assertDatabaseMissing('cart_items', [

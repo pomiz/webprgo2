@@ -105,7 +105,7 @@ class CheckoutController extends Controller
                 'shipping_cost' => $shippingCost,
                 'shipping_address' => $request->shipping_address,
                 'total_price' => $totalPrice,
-                'status' => 'pending',
+                'status' => Order::STATUS_PENDING_PAYMENT,
                 'virtual_account' => 'VA' . date('Ymd') . Str::upper(Str::random(8)),
             ]);
 

@@ -53,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // 📋 Order history
+    Route::get('/orders', [UserController::class, 'orders'])->name('orders.index');
+
     // Shipping routes
     Route::get('/shipping/provinces', [ShippingController::class, 'getProvinces'])->name('shipping.provinces');
     Route::get('/shipping/cities', [ShippingController::class, 'getCities'])->name('shipping.cities');

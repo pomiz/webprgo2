@@ -29,6 +29,7 @@
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 transition-colors">Home</a>
                     <a href="{{ route('products.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 transition-colors">Produk</a>
+                    <a href="{{ route('orders.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 transition-colors">Pesanan</a>
                 </div>
 
                 {{-- Right Side --}}
