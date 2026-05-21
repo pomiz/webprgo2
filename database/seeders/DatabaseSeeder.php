@@ -13,22 +13,26 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin user
-        User::factory()->create([
-            'username' => 'ipul',
-            'name' => 'Admin Ipul',
-            'email' => 'ipul@tokobaju.com',
-            'password' => 'ipul12345',
-            'role' => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'ipul@tokobaju.com'],
+            [
+                'username' => 'ipul',
+                'name' => 'Admin Ipul',
+                'password' => 'ipul12345',
+                'role' => 'admin',
+            ]
+        );
 
         // Regular user
-        User::factory()->create([
-            'username' => 'faruq',
-            'name' => 'Faruq',
-            'email' => 'faruq@tokobaju.com',
-            'password' => 'faruq1234',
-            'role' => 'user',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'faruq@tokobaju.com'],
+            [
+                'username' => 'faruq',
+                'name' => 'Faruq',
+                'password' => 'faruq1234',
+                'role' => 'user',
+            ]
+        );
 
         // Seed locations and products
         $this->call([
