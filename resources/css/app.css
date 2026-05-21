@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@layer base {
+    body {
+        @apply font-sans text-gray-800 bg-surface-50 antialiased;
+    }
+    h1, h2, h3 {
+        @apply font-serif;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-5 rounded-lg transition-colors duration-200;
+    }
+    .btn-outline {
+        @apply border border-brand-600 text-brand-600 hover:bg-brand-600 hover:text-white font-medium py-2.5 px-5 rounded-lg transition-colors duration-200;
+    }
+    .card {
+        @apply bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300;
+    }
+}
