@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Admin\ProductPrintController;
 use App\Http\Controllers\Admin\UserPrintController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ShippingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Shipping routes
+    Route::get('/shipping/provinces', [ShippingController::class, 'getProvinces'])->name('shipping.provinces');
+    Route::get('/shipping/cities', [ShippingController::class, 'getCities'])->name('shipping.cities');
+    Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
+    Route::post('/shipping/save-address', [ShippingController::class, 'saveAddress'])->name('shipping.save-address');
 });
 
 // These routes need auth protection
