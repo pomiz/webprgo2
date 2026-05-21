@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
-
 @layer base {
     body {
-        @apply font-sans text-gray-800 bg-surface-50 antialiased;
+        @apply font-sans text-gray-800 antialiased;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f0fb 50%, #fdf8f0 100%);
+    }
+    .dark body, body.dark-body {
+        background: linear-gradient(135deg, #0a0a12 0%, #14141f 50%, #1e1e2a 100%);
     }
     h1, h2, h3 {
         @apply font-serif;
@@ -15,12 +19,24 @@
 
 @layer components {
     .btn-primary {
-        @apply bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-5 rounded-lg transition-colors duration-200;
+        @apply bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5;
     }
     .btn-outline {
-        @apply border border-brand-600 text-brand-600 hover:bg-brand-600 hover:text-white font-medium py-2.5 px-5 rounded-lg transition-colors duration-200;
+        @apply border border-brand-600/50 text-brand-600 hover:bg-brand-600 hover:text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-200 backdrop-blur-sm;
     }
     .card {
-        @apply bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300;
+        @apply bg-white/70 dark:bg-white/5 rounded-2xl border border-white/20 dark:border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:bg-white/80 dark:hover:bg-white/10;
+    }
+    .glass {
+        @apply bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-xl rounded-2xl;
+    }
+    .glass-nav {
+        @apply bg-white/70 dark:bg-surface-900/70 backdrop-blur-xl border-b border-white/20 dark:border-white/5 shadow-sm;
+    }
+    .glass-card {
+        @apply bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-2xl rounded-3xl;
+    }
+    .glass-input {
+        @apply bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-white/30 dark:border-white/10 rounded-xl focus:ring-brand-500/50 focus:border-brand-500/50 transition-all;
     }
 }

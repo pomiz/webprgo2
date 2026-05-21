@@ -7,10 +7,17 @@
     <title>@yield('title', 'Ruang Baju')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-surface-50 dark:bg-surface-950 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+<body class="min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-300" :class="{ 'dark-body': darkMode }">
+    {{-- Animated gradient background --}}
+    <div class="fixed inset-0 -z-10">
+        <div class="absolute inset-0 bg-gradient-to-br from-brand-50/50 via-purple-50/30 to-blue-50/40 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950"></div>
+        <div class="absolute top-0 -left-40 w-80 h-80 bg-brand-200/20 dark:bg-brand-600/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 -right-40 w-96 h-96 bg-purple-200/15 dark:bg-purple-600/5 rounded-full blur-3xl"></div>
+        <div class="absolute inset-0 opacity-[0.012] dark:opacity-[0.02]" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 40px 40px;"></div>
+    </div>
 
     {{-- Navigation --}}
-    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-surface-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+    <nav class="sticky top-0 z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 {{-- Logo --}}
@@ -28,7 +35,7 @@
                 <div class="flex items-center space-x-4">
                     {{-- Dark Mode Toggle --}}
                     <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"
-                            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors">
+                            class="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/10 transition-colors">
                         <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                         </svg>
@@ -38,9 +45,9 @@
                     </button>
 
                     {{-- Cart --}}
-                    <a href="{{ route('cart.index') }}" class="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors">
+                    <a href="{{ route('cart.index') }}" class="relative p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/10 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
                         </svg>
                         @php $cartCount = \App\Models\CartItem::where('user_id', auth()->id())->count(); @endphp
                         @if($cartCount > 0)
@@ -57,11 +64,11 @@
                             </svg>
                         </button>
                         <div x-show="open" @click.away="open = false" x-transition
-                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 py-1">
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-surface-700">Profil</a>
+                             class="absolute right-0 mt-2 w-48 glass-card p-2">
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-white/10 rounded-xl transition-colors">Profil</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-surface-700">Logout</button>
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-white/10 rounded-xl transition-colors">Logout</button>
                             </form>
                         </div>
                     </div>
