@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
@@ -23,21 +23,23 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Tidak ada produk yang dipilih untuk checkout.');
         }
 
-        $cart = Session::get('cart', []);
-        $totalPrice = 0;
-        $itemsToPurchase = [];
+        $cartItems = CartItem::where('user_id', auth()->id())
+            ->whereIn('product_id', $selectedProductIds)
+            ->with('product')
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
+        }
 
         // 2. Kalkulasi Total & Cek Stok
-        foreach ($selectedProductIds as $id) {
-            if (isset($cart[$id])) {
-                $productInDb = Product::find($id);
-                // Cek jika stok mencukupi
-                if ($productInDb->stock < $cart[$id]['quantity']) {
-                    return redirect()->route('cart.index')->with('error', 'Stok untuk produk ' . $cart[$id]['name'] . ' tidak mencukupi.');
-                }
-                $itemsToPurchase[$id] = $cart[$id];
-                $totalPrice += $cart[$id]['price'] * $cart[$id]['quantity'];
+        $totalPrice = 0;
+        foreach ($cartItems as $item) {
+            if ($item->product->stock < $item->quantity) {
+                return redirect()->route('cart.index')
+                    ->with('error', 'Stok untuk produk ' . $item->product->name . ' tidak mencukupi.');
             }
+            $totalPrice += $item->product->price * $item->quantity;
         }
 
         $order = null;
@@ -48,42 +50,37 @@ class CheckoutController extends Controller
 
             // Buat Order utama
             $order = Order::create([
-                'user_id' => Auth::id(),
+                'user_id' => auth()->id(),
                 'total_price' => $totalPrice,
-                'status' => 'paid', // Langsung paid sesuai permintaan
+                'status' => 'pending',
                 'virtual_account' => 'VA' . date('Ymd') . Str::upper(Str::random(8)),
             ]);
 
             // Buat Order Items & Update Stok
-            foreach ($itemsToPurchase as $id => $details) {
+            foreach ($cartItems as $item) {
                 $order->items()->create([
-                    'product_id' => $id,
-                    'quantity' => $details['quantity'],
-                    'price' => $details['price'],
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
                 ]);
 
-                // Kurangi stok produk
-                $product = Product::find($id);
-                $product->stock -= $details['quantity'];
-                $product->save();
+                $item->product->decrement('stock', $item->quantity);
             }
+
+            // Hapus item yang sudah di-checkout dari keranjang
+            CartItem::where('user_id', auth()->id())
+                ->whereIn('product_id', $selectedProductIds)
+                ->delete();
 
             DB::commit();
 
         } catch (\Exception $e) {
             DB::rollBack();
-            // Sebaiknya di-log errornya
-            return redirect()->route('cart.index')->with('error', 'Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
+            return redirect()->route('cart.index')
+                ->with('error', 'Terjadi kesalahan saat memproses pesanan.');
         }
 
-        // 4. Hapus item yang sudah di-checkout dari keranjang session
-        $newCart = $cart;
-        foreach ($selectedProductIds as $id) {
-            unset($newCart[$id]);
-        }
-        Session::put('cart', $newCart);
-
-        // 5. Redirect ke halaman Invoice
+        // 4. Redirect ke halaman Invoice
         return redirect()->route('invoice.show', $order);
     }
 

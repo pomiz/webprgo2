@@ -58,7 +58,7 @@
     @endif
 
     <div class="cart-container">
-        @if(empty($cart))
+        @if($cartItems->isEmpty())
             <div class="text-center py-5">
                 <i class="bi bi-cart-x display-1 text-muted"></i>
                 <p class="mt-3">Keranjang Anda kosong.</p>
@@ -72,17 +72,17 @@
                     <label for="select-all">Pilih Semua</label>
                 </div>
 
-                @foreach($cart as $id => $details)
-                    <div class="cart-item" data-id="{{ $id }}" data-price="{{ $details['price'] }}" data-quantity="{{ $details['quantity'] }}">
-                        <input type="checkbox" name="selected_products[]" value="{{ $id }}" class="product-checkbox form-check-input">
-                        <img src="{{ asset('storage/' . $details['image']) }}" alt="{{ $details['name'] }}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/80x80?text=No+Image';">
+                @foreach($cartItems as $item)
+                    <div class="cart-item" data-id="{{ $item->product_id }}" data-price="{{ $item->product->price }}" data-quantity="{{ $item->quantity }}">
+                        <input type="checkbox" name="selected_products[]" value="{{ $item->product_id }}" class="product-checkbox form-check-input">
+                        <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/80x80?text=No+Image';">
                         <div>
-                            <div class="cart-item-name">{{ $details['name'] }}</div>
-                            <div class="cart-item-price">Rp {{ number_format($details['price'], 0, ',', '.') }}</div>
+                            <div class="cart-item-name">{{ $item->product->name }}</div>
+                            <div class="cart-item-price">Rp {{ number_format($item->product->price, 0, ',', '.') }}</div>
                         </div>
-                        <div class="cart-item-quantity">x {{ $details['quantity'] }}</div>
+                        <div class="cart-item-quantity">x {{ $item->quantity }}</div>
                         
-                        <form action="{{ route('cart.remove', $id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('cart.remove', $item->product_id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-remove" title="Hapus item" onclick="return confirm('Anda yakin ingin menghapus item ini dari keranjang?')">
