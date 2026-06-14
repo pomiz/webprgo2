@@ -65,8 +65,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        // 🟢 Tambahan untuk panel multi-role:
+        // Custom middleware
         'user.only' => \App\Http\Middleware\UserOnly::class,
-        'admin.only' => \App\Http\Middleware\AdminOnly::class,
     ];
 }

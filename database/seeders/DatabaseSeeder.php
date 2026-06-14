@@ -3,11 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 use App\Models\User;
-use App\Models\Order;
-use App\Models\OrderItem;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,28 +12,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Nonaktifkan foreign key constraints
-        Schema::disableForeignKeyConstraints();
+        // Admin user
+        User::firstOrCreate(
+            ['email' => 'ipul@tokobaju.com'],
+            [
+                'username' => 'ipul',
+                'name' => 'Admin Ipul',
+                'password' => 'ipul12345',
+                'role' => 'admin',
+            ]
+        );
+        $this->command->info('User admin (ipul@tokobaju.com) ready.');
 
-        // Truncate tabel untuk reset data
-        User::truncate();
-        Order::truncate();
-        OrderItem::truncate();
+        // Regular user
+        User::firstOrCreate(
+            ['email' => 'faruq@tokobaju.com'],
+            [
+                'username' => 'faruq',
+                'name' => 'Faruq',
+                'password' => 'faruq1234',
+                'role' => 'user',
+            ]
+        );
+        $this->command->info('User (faruq@tokobaju.com) ready.');
 
-        // Aktifkan kembali foreign key constraints
-        Schema::enableForeignKeyConstraints();
-
-        // Buat 1 user admin
-        User::factory()->create([
-            'name' => 'Admin Ipul',
-            'username' => 'ipuladmin',
-            'email' => 'ipul@tokobaju.com',
-            'password' => Hash::make('ipul12345'),
-            'role' => 'admin',
-        ]);
-
-        // Jalankan seeder produk
+        // Seed locations and products
         $this->call([
+            LocationSeeder::class,
             ProductSeeder::class,
         ]);
     }

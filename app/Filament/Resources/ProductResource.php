@@ -64,8 +64,8 @@ class ProductResource extends Resource
                     ->label('Gambar Produk')
                     ->image()
                     ->disk('public')
-                    ->directory('products') // Ubah ke folder 'products'
-                    ->visibility('public')
+                    ->directory('/') // Ubah ke folder 'products'
+                    
                     ->required(),
                 
             ]);
@@ -77,6 +77,7 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Gambar')
+                    ->visibility('public')
                     ->disk('public') // Ambil dari disk public
                     ->circular(),
 
@@ -91,7 +92,9 @@ class ProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga')
-                    ->money('IDR', true)
+                    // ->money('IDR', true)
+                    ->prefix('Rp ')
+                   
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('stock')

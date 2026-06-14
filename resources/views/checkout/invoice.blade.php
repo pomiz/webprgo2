@@ -1,219 +1,112 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Pesanan #{{ $order->id }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            margin: 0;
-            padding: 30px;
-            color: #333;
-        }
-        .invoice-container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            padding: 40px;
-        }
-        .invoice-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .invoice-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #155724;
-            margin: 0;
-        }
-        .invoice-header p {
-            font-size: 16px;
-            color: #555;
-        }
-        .va-box {
-            background: #e9f5ff;
-            border: 2px dashed #0D6EFD;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .va-box .va-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #0a58ca;
-            margin-bottom: 8px;
-        }
-        .va-box .va-number {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #000;
-        }
-        .order-details, .order-summary {
-            margin-bottom: 30px;
-        }
-        .order-details h2, .order-summary h2 {
-            font-size: 20px;
-            font-weight: 600;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .details-grid div {
-            font-size: 15px;
-        }
-        .details-grid span {
-            font-weight: 600;
-        }
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .items-table th, .items-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        .items-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-        }
-        .items-table .text-right {
-            text-align: right;
-        }
-        .total-row {
-            font-weight: 700;
-            font-size: 18px;
-        }
-        
-        /* Buttons */
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 24px;
-            font-size: 15px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: .25s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-home {
-            background: black;
-            color: white;
-        }
-        .btn-home:hover {
-            opacity: .85;
-            color: white;
-        }
-        .btn-print {
-            background: white;
-            color: black;
-            border: 2px solid black;
-        }
-        .btn-print:hover {
-            background: #f1f1f1;
-        }
+@extends('layouts.user')
+@section('title', 'Invoice #' . $order->id . ' - Ruang Baju')
 
-        /* PRINT STYLES */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .invoice-container {
-                box-shadow: none;
-                max-width: 100%;
-                padding: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
-    </style>
-</head>
-<body>
+@section('content')
+    <div class="max-w-3xl mx-auto">
+        {{-- Invoice Header --}}
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="font-serif text-3xl font-bold text-gray-900 dark:text-white">Invoice</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Order #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</p>
+            </div>
+            <button onclick="window.print()" class="btn-outline text-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                </svg>
+                Cetak
+            </button>
+        </div>
 
-<div class="invoice-container">
-    <div class="invoice-header">
-        <h1>Pembayaran Berhasil</h1>
-        <p>Pesanan Anda telah kami terima. Terima kasih telah berbelanja!</p>
-    </div>
+        {{-- Invoice Card --}}
+        <div class="card p-8">
+            {{-- Store & Order Info --}}
+            <div class="flex justify-between items-start mb-8 pb-6 border-b border-gray-100 dark:border-gray-700">
+                <div>
+                    <h2 class="font-serif text-xl font-bold text-gray-900 dark:text-white">Ruang Baju</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Fashion Store</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                        <span class="text-gray-500 dark:text-gray-400">Tanggal:</span>
+                        {{ $order->created_at->format('d M Y, H:i') }}
+                    </p>
+                    <div class="mt-2">
+                        @if(in_array($order->status, ['confirmed', 'processing', 'shipped', 'completed']))
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                                {{ $order->status_label }}
+                            </span>
+                        @elseif($order->status === 'cancelled')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                                {{ $order->status_label }}
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                                {{ $order->status_label }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
-    <div class="va-box">
-        <div class="va-title">NOMOR VIRTUAL ACCOUNT</div>
-        <div class="va-number">{{ $order->virtual_account }}</div>
-    </div>
+            {{-- Items Table --}}
+            <div class="mb-8">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-100 dark:border-gray-700">
+                            <th class="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider pb-3">Produk</th>
+                            <th class="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider pb-3">Qty</th>
+                            <th class="text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider pb-3">Harga</th>
+                            <th class="text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider pb-3">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
+                        @foreach($order->items as $item)
+                            <tr>
+                                <td class="py-3 text-sm text-gray-900 dark:text-white">{{ $item->product->name ?? 'Produk dihapus' }}</td>
+                                <td class="py-3 text-sm text-gray-600 dark:text-gray-300 text-center">{{ $item->quantity }}</td>
+                                <td class="py-3 text-sm text-gray-600 dark:text-gray-300 text-right">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                                <td class="py-3 text-sm font-medium text-gray-900 dark:text-white text-right">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="order-details">
-        <h2>Detail Pesanan</h2>
-        <div class="details-grid">
-            <div><span>Nomor Pesanan:</span> #{{ $order->id }}</div>
-            <div><span>Tanggal Pesanan:</span> {{ $order->created_at->format('d F Y') }}</div>
-            <div><span>Nama Pelanggan:</span> {{ $order->user->name }}</div>
-            <div><span>Status:</span> <span style="color: #155724; font-weight:700;">{{ ucfirst($order->status) }}</span></div>
+            {{-- Totals --}}
+            <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Ongkir</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
+                    <span class="font-semibold text-gray-900 dark:text-white">Total</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                </div>
+            </div>
+
+            {{-- Virtual Account --}}
+            <div class="mt-8 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-lg p-4">
+                <p class="text-sm font-medium text-brand-800 dark:text-brand-300 mb-1">Virtual Account</p>
+                <p class="text-lg font-bold text-brand-900 dark:text-brand-200 font-mono tracking-wider">{{ $order->virtual_account }}</p>
+                <p class="text-xs text-brand-600 dark:text-brand-400 mt-1">Gunakan nomor ini untuk melakukan pembayaran</p>
+            </div>
+
+            @if($order->shipping_address)
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <span class="font-medium">Alamat Pengiriman:</span> {{ $order->shipping_address }}
+            </div>
+            @endif
+        </div>
+
+        {{-- Back Button --}}
+        <div class="mt-6 text-center">
+            <a href="{{ route('home') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">
+                &larr; Kembali ke Beranda
+            </a>
         </div>
     </div>
-
-    <div class="order-summary">
-        <h2>Rincian Barang</h2>
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th class="text-right">Kuantitas</th>
-                    <th class="text-right">Harga Satuan</th>
-                    <th class="text-right">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($order->items as $item)
-                <tr>
-                    <td>{{ $item->product->name }}</td>
-                    <td class="text-right">{{ $item->quantity }}</td>
-                    <td class="text-right">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                    <td class="text-right">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
-                </tr>
-                @endforeach
-                <tr class="total-row">
-                    <td colspan="3" class="text-right">Total Keseluruhan</td>
-                    <td class="text-right">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Tombol tidak akan muncul saat diprint karena class no-print -->
-    <div class="footer no-print">
-        <button onclick="window.print()" class="btn btn-print">
-            <i class="bi bi-printer me-2" style="margin-right:8px;"></i> Cetak / Simpan PDF
-        </button>
-        <a href="{{ route('home') }}" class="btn btn-home">
-            Kembali ke Beranda
-        </a>
-    </div>
-</div>
-
-</body>
-</html>
+@endsection

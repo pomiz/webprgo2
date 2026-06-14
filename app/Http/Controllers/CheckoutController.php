@@ -2,89 +2,98 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
-use App\Models\Product;
+use App\Models\UserAddress;
+use App\Services\CheckoutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
+    public function __construct(
+        private CheckoutService $checkoutService
+    ) {}
+
     /**
-     * Handle the checkout process, create order, and redirect to invoice.
+     * Store selected products in session and redirect to checkout page.
+     */
+    public function prepare(CheckoutRequest $request)
+    {
+        Session::put('checkout_products', $request->validated()['selected_products']);
+        return redirect()->route('checkout.index');
+    }
+
+    /**
+     * Show checkout page with address selection and shipping calculation.
+     */
+    public function showCheckout()
+    {
+        $selectedProductIds = Session::get('checkout_products', []);
+
+        if (empty($selectedProductIds)) {
+            return redirect()->route('cart.index')->with('error', 'Pilih produk untuk checkout.');
+        }
+
+        $cartItems = $this->checkoutService->getCartItems(auth()->id(), $selectedProductIds);
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
+        }
+
+        $subtotal = $this->checkoutService->calculateSubtotal($cartItems);
+        $defaultAddress = UserAddress::where('user_id', auth()->id())
+            ->where('is_default', true)
+            ->first();
+
+        return view('checkout.index', compact('cartItems', 'subtotal', 'defaultAddress'));
+    }
+
+    /**
+     * Process the checkout with shipping.
      */
     public function checkout(Request $request)
     {
-        // 1. Validasi & Ambil Data
-        $selectedProductIds = $request->input('selected_products');
+        $request->validate([
+            'shipping_address' => 'nullable|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $selectedProductIds = Session::get('checkout_products', []);
+
         if (empty($selectedProductIds)) {
-            return redirect()->route('cart.index')->with('error', 'Tidak ada produk yang dipilih untuk checkout.');
+            return redirect()->route('cart.index')->with('error', 'Tidak ada produk yang dipilih.');
         }
 
-        $cart = Session::get('cart', []);
-        $totalPrice = 0;
-        $itemsToPurchase = [];
+        $cartItems = $this->checkoutService->getCartItems(auth()->id(), $selectedProductIds);
 
-        // 2. Kalkulasi Total & Cek Stok
-        foreach ($selectedProductIds as $id) {
-            if (isset($cart[$id])) {
-                $productInDb = Product::find($id);
-                // Cek jika stok mencukupi
-                if ($productInDb->stock < $cart[$id]['quantity']) {
-                    return redirect()->route('cart.index')->with('error', 'Stok untuk produk ' . $cart[$id]['name'] . ' tidak mencukupi.');
-                }
-                $itemsToPurchase[$id] = $cart[$id];
-                $totalPrice += $cart[$id]['price'] * $cart[$id]['quantity'];
-            }
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
         }
 
-        $order = null;
-
-        // 3. Proses ke Database (Gunakan Transaksi)
-        try {
-            DB::beginTransaction();
-
-            // Buat Order utama
-            $order = Order::create([
-                'user_id' => Auth::id(),
-                'total_price' => $totalPrice,
-                'status' => 'paid', // Langsung paid sesuai permintaan
-                'virtual_account' => 'VA' . date('Ymd') . Str::upper(Str::random(8)),
-            ]);
-
-            // Buat Order Items & Update Stok
-            foreach ($itemsToPurchase as $id => $details) {
-                $order->items()->create([
-                    'product_id' => $id,
-                    'quantity' => $details['quantity'],
-                    'price' => $details['price'],
-                ]);
-
-                // Kurangi stok produk
-                $product = Product::find($id);
-                $product->stock -= $details['quantity'];
-                $product->save();
-            }
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // Sebaiknya di-log errornya
-            return redirect()->route('cart.index')->with('error', 'Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
+        // Validate stock
+        $stockError = $this->checkoutService->validateStock($cartItems);
+        if ($stockError) {
+            return redirect()->route('cart.index')->with('error', $stockError);
         }
 
-        // 4. Hapus item yang sudah di-checkout dari keranjang session
-        $newCart = $cart;
-        foreach ($selectedProductIds as $id) {
-            unset($newCart[$id]);
-        }
-        Session::put('cart', $newCart);
+        // Process order
+        $result = $this->checkoutService->processOrder(auth()->id(), $cartItems, [
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'shipping_address' => $request->shipping_address,
+            'province' => $request->input('province'),
+            'city' => $request->input('city'),
+        ]);
 
-        // 5. Redirect ke halaman Invoice
-        return redirect()->route('invoice.show', $order);
+        if (is_string($result)) {
+            return redirect()->route('cart.index')->with('error', $result);
+        }
+
+        Session::forget('checkout_products');
+        return redirect()->route('invoice.show', $result);
     }
 
     /**
@@ -92,7 +101,6 @@ class CheckoutController extends Controller
      */
     public function invoice(Order $order)
     {
-        // Pastikan user hanya bisa melihat invoice miliknya sendiri
         if ($order->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
