@@ -121,7 +121,7 @@ class OrderResource extends Resource
                     ->options(Order::STATUSES),
             ])
             ->actions([
-                // Advance to next status (with courier selection for shipping)
+                // Advance to next status
                 Action::make('advance')
                     ->label(fn (Order $record) => match ($record->next_status) {
                         Order::STATUS_CONFIRMED => 'Konfirmasi Bayar',
@@ -145,49 +145,23 @@ class OrderResource extends Resource
                         default => 'gray',
                     })
                     ->requiresConfirmation()
-                    ->modalHeading(fn (Order $record) => match ($record->next_status) {
-                        Order::STATUS_SHIPPED => 'Pilih Kurir & Kirim Pesanan',
-                        default => 'Ubah status ke "' . Order::STATUSES[$record->next_status] . '"?',
-                    })
+                    ->modalHeading(fn (Order $record) => 'Ubah status ke "' . Order::STATUSES[$record->next_status] . '"?')
                     ->modalDescription(fn (Order $record) => match ($record->next_status) {
-                        Order::STATUS_SHIPPED => 'Pilih jasa kurir untuk mengirim pesanan ini.',
+                        Order::STATUS_SHIPPED => 'Pesanan akan dikirim menggunakan kurir: <strong>' . ($record->courier ?? 'Belum dipilih') . '</strong>. Nomor resi akan digenerate otomatis.',
                         default => 'Status pesanan akan diperbarui.',
                     })
-                    ->modalIcon(fn (Order $record) => match ($record->next_status) {
-                        Order::STATUS_SHIPPED => 'heroicon-o-truck',
-                        default => null,
-                    })
-                    ->form(fn (Order $record) => match ($record->next_status) {
-                        Order::STATUS_SHIPPED => [
-                            \Filament\Forms\Components\Select::make('courier')
-                                ->label('Kurir')
-                                ->options([
-                                    'JNE' => 'JNE',
-                                    'J&T' => 'J&T Express',
-                                    'SiCepat' => 'SiCepat',
-                                    'AnterAja' => 'AnterAja',
-                                    'Lion Parcel' => 'Lion Parcel',
-                                ])
-                                ->required()
-                                ->native(false),
-                            \Filament\Forms\Components\TextInput::make('_tracking')
-                                ->label('Nomor Resi')
-                                ->disabled()
-                                ->dehydrated(false)
-                                ->hint('Auto-generate')
-                                ->default(fn () => strtoupper(Str::random(3)) . '-' . date('Ymd') . '-' . strtoupper(Str::random(4))),
-                        ],
-                        default => [],
-                    })
                     ->visible(fn (Order $record) => $record->canAdvance())
-                    ->action(function (Order $record, array $data) {
-                        // If advancing to shipped, set courier + tracking info
+                    ->action(function (Order $record) {
+                        // If advancing to shipped, auto-generate tracking
                         if ($record->next_status === Order::STATUS_SHIPPED) {
-                            $record->courier = $data['courier'];
-                            $record->tracking_number = strtoupper(substr($data['courier'], 0, 3))
+                            $courier = $record->courier ?: 'Lion Parcel';
+                            $record->tracking_number = strtoupper(substr($courier, 0, 3))
                                 . '-' . date('Ymd') . '-' . strtoupper(Str::random(4));
                             $record->shipped_at = now();
                             $record->tracking_status = Order::TRACKING_PICKED_UP;
+                            if (!$record->courier) {
+                                $record->courier = $courier;
+                            }
                         }
 
                         $record->advance();
