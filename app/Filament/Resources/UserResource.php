@@ -93,12 +93,14 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\BadgeColumn::make('role')
+                Tables\Columns\TextColumn::make('role')
                     ->label('Role')
-                    ->colors([
-                        'danger' => 'admin',
-                        'success' => 'user',
-                    ])
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'admin' => 'danger',
+                        'user' => 'success',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -117,7 +119,7 @@ class UserResource extends Resource
                 Tables\Actions\Action::make('print')
                     ->label('Export PDF')
                     ->icon('heroicon-o-printer')
-                    ->url(route('print.user'), shouldOpenInNewTab: true),
+                    ->url(route('print.users'), shouldOpenInNewTab: true),
 
                 Tables\Actions\CreateAction::make(),
             ])

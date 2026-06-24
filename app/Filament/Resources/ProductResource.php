@@ -77,8 +77,7 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Gambar')
-                    ->visibility('public')
-                    ->disk('public') // Ambil dari disk public
+                    ->disk('public')
                     ->circular(),
 
                 Tables\Columns\TextColumn::make('name')
@@ -110,7 +109,7 @@ class ProductResource extends Resource
                 Tables\Actions\Action::make('print')
                     ->label('Print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn (): string => route('print.product'), shouldOpenInNewTab: true),
+                    ->url(fn (): string => route('print.products'), shouldOpenInNewTab: true),
             ])
             ->filters([])
             ->actions([
