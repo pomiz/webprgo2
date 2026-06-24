@@ -36,10 +36,11 @@ class DatabaseSeeder extends Seeder
         );
         $this->command->info('User (faruq@tokobaju.com) ready.');
 
-        // Seed locations and products
+        // Seed locations, products, and orders
         $this->call([
             LocationSeeder::class,
             ProductSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

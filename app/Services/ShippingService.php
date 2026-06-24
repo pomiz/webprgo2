@@ -69,4 +69,52 @@ class ShippingService
             'error' => null,
         ];
     }
+
+    /**
+     * Get available courier options with pricing based on distance.
+     * Each courier has a base multiplier and delivery speed.
+     *
+     * @param float $baseCost Base shipping cost from Haversine
+     * @return array<int, array{code: string, name: string, cost: float, estimate: string}>
+     */
+    public function getCourierOptions(float $baseCost): array
+    {
+        return [
+            [
+                'code' => 'jne',
+                'name' => 'JNE Reguler',
+                'multiplier' => 1.0,
+                'estimate' => '3-5 hari',
+                'cost' => max(10000, round($baseCost * 1.0)),
+            ],
+            [
+                'code' => 'jnt',
+                'name' => 'J&T Express',
+                'multiplier' => 1.3,
+                'estimate' => '1-2 hari',
+                'cost' => max(10000, round($baseCost * 1.3)),
+            ],
+            [
+                'code' => 'sicepat',
+                'name' => 'SiCepat',
+                'multiplier' => 1.15,
+                'estimate' => '2-3 hari',
+                'cost' => max(10000, round($baseCost * 1.15)),
+            ],
+            [
+                'code' => 'anteraja',
+                'name' => 'AnterAja',
+                'multiplier' => 1.1,
+                'estimate' => '2-4 hari',
+                'cost' => max(10000, round($baseCost * 1.1)),
+            ],
+            [
+                'code' => 'lion',
+                'name' => 'Lion Parcel',
+                'multiplier' => 0.9,
+                'estimate' => '3-6 hari',
+                'cost' => max(10000, round($baseCost * 0.9)),
+            ],
+        ];
+    }
 }

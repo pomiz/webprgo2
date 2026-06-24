@@ -64,7 +64,22 @@ class CheckoutService
     public function processOrder(int $userId, $cartItems, array $data): Order|string
     {
         $subtotal = $this->calculateSubtotal($cartItems);
-        $shippingCost = $this->calculateShipping((float) $data['latitude'], (float) $data['longitude']);
+        $baseShipping = $this->calculateShipping((float) $data['latitude'], (float) $data['longitude']);
+
+        // Calculate actual shipping cost based on courier selection
+        $courier = $data['courier'] ?? null;
+        $courierName = $data['courier_name'] ?? null;
+        $courierEstimate = $data['courier_estimate'] ?? null;
+        $shippingCost = $baseShipping;
+
+        if ($courier && $baseShipping > 0) {
+            $couriers = $this->shippingService->getCourierOptions($baseShipping);
+            $selected = collect($couriers)->firstWhere('code', $courier);
+            if ($selected) {
+                $shippingCost = $selected['cost'];
+            }
+        }
+
         $totalPrice = $subtotal + $shippingCost;
 
         try {
@@ -78,6 +93,7 @@ class CheckoutService
                 'total_price' => $totalPrice,
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'virtual_account' => 'VA' . date('Ymd') . Str::upper(Str::random(8)),
+                'courier' => $courierName,
             ]);
 
             foreach ($cartItems as $item) {

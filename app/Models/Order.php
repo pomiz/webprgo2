@@ -18,6 +18,12 @@ class Order extends Model
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELLED = 'cancelled';
 
+    // Tracking sub-statuses (after shipped)
+    const TRACKING_PICKED_UP = 'picked_up';
+    const TRACKING_IN_TRANSIT = 'in_transit';
+    const TRACKING_ARRIVED = 'arrived';
+    const TRACKING_DELIVERED = 'delivered';
+
     const STATUSES = [
         self::STATUS_PENDING_PAYMENT => 'Menunggu Pembayaran',
         self::STATUS_CONFIRMED => 'Pembayaran Dikonfirmasi',
@@ -25,6 +31,13 @@ class Order extends Model
         self::STATUS_SHIPPED => 'Dikirim',
         self::STATUS_COMPLETED => 'Selesai',
         self::STATUS_CANCELLED => 'Dibatalkan',
+    ];
+
+    const TRACKING_STATUSES = [
+        self::TRACKING_PICKED_UP => 'Dijemput Kurir',
+        self::TRACKING_IN_TRANSIT => 'Dalam Perjalanan',
+        self::TRACKING_ARRIVED => 'Tiba di Tujuan',
+        self::TRACKING_DELIVERED => 'Diterima',
     ];
 
     const STATUS_COLORS = [
@@ -44,6 +57,10 @@ class Order extends Model
         'shipping_address',
         'status',
         'virtual_account',
+        'courier',
+        'tracking_number',
+        'shipped_at',
+        'tracking_status',
     ];
 
     public function user(): BelongsTo
@@ -103,6 +120,45 @@ class Order extends Model
     {
         if (!$this->canCancel()) return false;
         $this->status = self::STATUS_CANCELLED;
+        return $this->save();
+    }
+
+    // ─── Tracking methods ──────────────────────────────────────
+
+    public function getTrackingLabelAttribute(): string
+    {
+        return self::TRACKING_STATUSES[$this->tracking_status] ?? '-';
+    }
+
+    public function getNextTrackingStepAttribute(): ?string
+    {
+        $flow = [
+            self::TRACKING_PICKED_UP => self::TRACKING_IN_TRANSIT,
+            self::TRACKING_IN_TRANSIT => self::TRACKING_ARRIVED,
+            self::TRACKING_ARRIVED => self::TRACKING_DELIVERED,
+        ];
+
+        return $flow[$this->tracking_status] ?? null;
+    }
+
+    public function canAdvanceTracking(): bool
+    {
+        return $this->status === self::STATUS_SHIPPED
+            && $this->tracking_status !== null
+            && $this->tracking_status !== self::TRACKING_DELIVERED;
+    }
+
+    public function advanceTracking(): bool
+    {
+        if (!$this->canAdvanceTracking()) return false;
+
+        $this->tracking_status = $this->nextTrackingStep;
+
+        // When delivered, auto-complete the order
+        if ($this->tracking_status === self::TRACKING_DELIVERED) {
+            $this->status = self::STATUS_COMPLETED;
+        }
+
         return $this->save();
     }
 }

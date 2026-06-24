@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Makalah Project Akhir - Perancangan Website E-Commerce Fashion Ruang Baju Berbasis Laravel</title>
+<style>
+    @page {
+        size: A4;
+        margin: 4cm 3cm 3cm 4cm;
+    }
+    @page :first {
+        margin: 4cm 3cm 3cm 4cm;
+        @bottom-center { content: none; }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+        font-family: "Times New Roman", Times, serif;
+        font-size: 12pt;
+        line-height: 1.5;
+        color: #000;
+        background: #fff;
+        margin: 0;
+        padding: 0;
+        text-align: justify;
+    }
+
+    /* Screen-only frame to preview A4 page nicely in browser */
+    @media screen {
+        body {
+            background: #e5e5e5;
+            padding: 2rem 0;
+        }
+        .page {
+            background: #fff;
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 4cm 3cm 3cm 4cm;
+            margin: 0 auto 1.5rem auto;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+    }
+
+    @media print {
+        .page {
+            page-break-after: always;
+            padding: 0;
+        }
+        .page:last-child { page-break-after: auto; }
+    }
+
+    h1, h2, h3, h4 {
+        font-family: "Times New Roman", Times, serif;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    /* ---------- Cover ---------- */
+    .cover {
+        text-align: center;
+        min-height: 25cm;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .cover .judul-utama {
+        font-size: 14pt;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5pt;
+        margin-top: 0;
+        margin-bottom: 1.5em;
+    }
+    .cover .judul-makalah {
+        font-size: 14pt;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-top: 1em;
+        margin-bottom: 2em;
+        line-height: 1.5;
+    }
+    .cover .logo {
+        width: 4cm;
+        height: 4cm;
+        border: 1px dashed #888;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: italic;
+        color: #888;
+        margin: 1.5em auto;
+        font-size: 10pt;
+    }
+    .cover .blok-info {
+        margin-top: 1.5em;
+        font-size: 12pt;
+        line-height: 2;
+    }
+    .cover .blok-info .label {
+        font-weight: bold;
+    }
+    .cover .anggota {
+        margin: 1em 0 2em 0;
+        line-height: 1.8;
+    }
+    .cover .anggota .nama {
+        display: inline-block;
+        text-align: left;
+    }
+    .cover .footer-info {
+        margin-top: auto;
+        padding-top: 2em;
+        font-weight: bold;
+        line-height: 1.6;
+    }
+
+    /* ---------- Daftar Isi ---------- */
+    .toc h2 {
+        text-align: center;
+        font-size: 14pt;
+        text-transform: uppercase;
+        margin-bottom: 2em;
+    }
+    .toc ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .toc li {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5em;
+        padding: 0.15em 0;
+    }
+    .toc li.sub { padding-left: 2em; }
+    .toc li.sub-2 { padding-left: 4em; }
+    .toc .judul-toc {
+        white-space: nowrap;
+    }
+    .toc .leader {
+        flex: 1;
+        border-bottom: 1px dotted #555;
+        margin: 0 0.4em;
+        position: relative;
+        top: -0.25em;
+    }
+    .toc .hal {
+        white-space: nowrap;
+    }
+    .toc li.bab .judul-toc { font-weight: bold; text-transform: uppercase; }
+
+    /* ---------- Generic page elements ---------- */
+    .bab-title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 14pt;
+        text-transform: uppercase;
+        margin-top: 0;
+        margin-bottom: 2em;
+        line-height: 1.5;
+    }
+    h2.section {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 1.2em;
+        margin-bottom: 0.6em;
+    }
+    h3.subsection {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+        padding-left: 1em;
+    }
+    h4.subsubsection {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 0.8em;
+        margin-bottom: 0.4em;
+        padding-left: 2em;
+    }
+    p {
+        text-indent: 1.27cm;
+        margin: 0 0 0.6em 0;
+    }
+    p.no-indent { text-indent: 0; }
+    ol.alpha { list-style-type: upper-alpha; padding-left: 2.2em; }
+    ol.num { list-style-type: decimal; padding-left: 2.2em; }
+    ol li, ul li { margin-bottom: 0.25em; }
+
+    .pustaka {
+        padding-left: 1.27cm;
+        text-indent: -1.27cm;
+        margin-bottom: 0.8em;
+    }
+
+    /* ---------- Gambar tampilan ---------- */
+    .gambar-wrap {
+        text-align: center;
+        margin: 1em 0 1.5em 0;
+        page-break-inside: avoid;
+    }
+    .gambar-wrap .placeholder {
+        width: 13cm;
+        height: 8cm;
+        margin: 0 auto;
+        border: 1px solid #888;
+        background:
+            repeating-linear-gradient(45deg, #f4f4f4 0 10px, #fafafa 10px 20px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: italic;
+        color: #777;
+        font-size: 10pt;
+    }
+    .gambar-wrap img {
+        max-width: 13cm;
+        max-height: 9cm;
+        border: 1px solid #888;
+    }
+    .gambar-wrap .keterangan {
+        margin-top: 0.6em;
+        font-size: 11pt;
+        text-indent: 0;
+    }
+</style>
+</head>
+<body>
+
+<!-- ====================== HALAMAN COVER ====================== -->
+<section class="page cover">
+    <div class="judul-utama">Makalah Project Akhir</div>
+
+    <div class="judul-makalah">
+        Perancangan Website E-Commerce<br>
+        Fashion Ruang Baju Berbasis Laravel
+    </div>
+
+    <div class="logo">[ Logo UBSI ]</div>
+
+    <div class="blok-info">
+        <div><span class="label">Kelas:</span></div>
+        <div>17.4A.07</div>
+    </div>
+
+    <div class="blok-info">
+        <div><span class="label">Anggota Kelompok:</span></div>
+        <div class="anggota">
+            <div class="nama">Bobbin Ariyadi Jasno &nbsp;&nbsp;(17x......)</div><br>
+            <div class="nama">David &nbsp;&nbsp;(17x......)</div><br>
+            <div class="nama">Ahmad Ariful Fathoni &nbsp;&nbsp;(17x......)</div><br>
+            <div class="nama">Mohammad Zidane Hasan &nbsp;&nbsp;(17x......)</div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <div>Program Studi Teknologi Informasi</div>
+        <div>Fakultas Teknik &amp; Informatika</div>
+        <div>Universitas Bina Sarana Informatika</div>
+        <div>2025</div>
+    </div>
+</section>
+
+<!-- ====================== DAFTAR ISI ====================== -->
+<section class="page toc">
+    <h2>Daftar Isi</h2>
+    <ol>
+        <li><span class="judul-toc">DAFTAR ISI</span><span class="leader"></span><span class="hal">1</span></li>
+
+        <li class="bab"><span class="judul-toc">BAB I &nbsp;&nbsp;PENDAHULUAN</span><span class="leader"></span><span class="hal">3</span></li>
+        <li class="sub"><span class="judul-toc">1.1&nbsp;&nbsp;Latar Belakang</span><span class="leader"></span><span class="hal">3</span></li>
+        <li class="sub"><span class="judul-toc">1.2&nbsp;&nbsp;Manfaat</span><span class="leader"></span><span class="hal">4</span></li>
+        <li class="sub-2"><span class="judul-toc">1.2.1&nbsp;&nbsp;Manfaat bagi pelanggan</span><span class="leader"></span><span class="hal">4</span></li>
+        <li class="sub-2"><span class="judul-toc">1.2.2&nbsp;&nbsp;Manfaat bagi pemilik toko</span><span class="leader"></span><span class="hal">4</span></li>
+        <li class="sub-2"><span class="judul-toc">1.2.3&nbsp;&nbsp;Manfaat bagi industri ritel fashion</span><span class="leader"></span><span class="hal">4</span></li>
+        <li class="sub"><span class="judul-toc">1.3&nbsp;&nbsp;Tujuan</span><span class="leader"></span><span class="hal">4</span></li>
+        <li class="sub"><span class="judul-toc">1.4&nbsp;&nbsp;Ruang Lingkup</span><span class="leader"></span><span class="hal">5</span></li>
+
+        <li class="bab"><span class="judul-toc">BAB II &nbsp;&nbsp;LANDASAN TEORI</span><span class="leader"></span><span class="hal">6</span></li>
+        <li class="sub"><span class="judul-toc">2.1&nbsp;&nbsp;Teori Dasar</span><span class="leader"></span><span class="hal">6</span></li>
+        <li class="sub-2"><span class="judul-toc">2.1.1&nbsp;&nbsp;Definisi Website</span><span class="leader"></span><span class="hal">6</span></li>
+        <li class="sub-2"><span class="judul-toc">2.1.2&nbsp;&nbsp;E-Commerce</span><span class="leader"></span><span class="hal">6</span></li>
+        <li class="sub"><span class="judul-toc">2.2&nbsp;&nbsp;Teknologi Yang Digunakan</span><span class="leader"></span><span class="hal">7</span></li>
+        <li class="sub-2"><span class="judul-toc">2.2.1&nbsp;&nbsp;HTML (Hypertext Markup Language)</span><span class="leader"></span><span class="hal">7</span></li>
+        <li class="sub-2"><span class="judul-toc">2.2.2&nbsp;&nbsp;Tailwind CSS</span><span class="leader"></span><span class="hal">7</span></li>
+        <li class="sub-2"><span class="judul-toc">2.2.3&nbsp;&nbsp;JavaScript dan Alpine.js</span><span class="leader"></span><span class="hal">7</span></li>
+        <li class="sub-2"><span class="judul-toc">2.2.4&nbsp;&nbsp;Laravel</span><span class="leader"></span><span class="hal">8</span></li>
+        <li class="sub-2"><span class="judul-toc">2.2.5&nbsp;&nbsp;Filament</span><span class="leader"></span><span class="hal">8</span></li>
+        <li class="sub"><span class="judul-toc">2.3&nbsp;&nbsp;Basis Data</span><span class="leader"></span><span class="hal">9</span></li>
+        <li class="sub-2"><span class="judul-toc">2.3.1&nbsp;&nbsp;MySQL</span><span class="leader"></span><span class="hal">9</span></li>
+
+        <li class="bab"><span class="judul-toc">BAB III &nbsp;&nbsp;PEMBAHASAN</span><span class="leader"></span><span class="hal">10</span></li>
+        <li class="sub"><span class="judul-toc">3.1&nbsp;&nbsp;Analisis Kebutuhan Sistem</span><span class="leader"></span><span class="hal">10</span></li>
+        <li class="sub-2"><span class="judul-toc">3.1.1&nbsp;&nbsp;Kebutuhan Fungsional</span><span class="leader"></span><span class="hal">10</span></li>
+        <li class="sub-2"><span class="judul-toc">3.1.2&nbsp;&nbsp;Kebutuhan Non-Fungsional</span><span class="leader"></span><span class="hal">11</span></li>
+        <li class="sub"><span class="judul-toc">3.2&nbsp;&nbsp;Desain Sistem</span><span class="leader"></span><span class="hal">12</span></li>
+        <li class="sub-2"><span class="judul-toc">3.2.1&nbsp;&nbsp;Desain Arsitektur Sistem</span><span class="leader"></span><span class="hal">12</span></li>
+        <li class="sub-2"><span class="judul-toc">3.2.2&nbsp;&nbsp;Desain Antarmuka Pengguna</span><span class="leader"></span><span class="hal">12</span></li>
+        <li class="sub-2"><span class="judul-toc">3.2.3&nbsp;&nbsp;Desain Perancangan Alur Sistem</span><span class="leader"></span><span class="hal">13</span></li>
+        <li class="sub"><span class="judul-toc">3.3&nbsp;&nbsp;Implementasi Sistem</span><span class="leader"></span><span class="hal">14</span></li>
+        <li class="sub-2"><span class="judul-toc">3.3.1&nbsp;&nbsp;Lingkungan Pengembangan</span><span class="leader"></span><span class="hal">14</span></li>
+        <li class="sub"><span class="judul-toc">3.4&nbsp;&nbsp;Hasil Pengujian</span><span class="leader"></span><span class="hal">14</span></li>
+        <li class="sub"><span class="judul-toc">3.5&nbsp;&nbsp;Tampilan Website</span><span class="leader"></span><span class="hal">15</span></li>
+
+        <li class="bab"><span class="judul-toc">BAB IV &nbsp;&nbsp;PENUTUP</span><span class="leader"></span><span class="hal">19</span></li>
+        <li class="sub"><span class="judul-toc">4.1&nbsp;&nbsp;Kesimpulan</span><span class="leader"></span><span class="hal">19</span></li>
+        <li class="sub"><span class="judul-toc">4.2&nbsp;&nbsp;Saran</span><span class="leader"></span><span class="hal">19</span></li>
+
+        <li class="bab"><span class="judul-toc">DAFTAR PUSTAKA</span><span class="leader"></span><span class="hal">21</span></li>
+    </ol>
+</section>
+
+<!-- ====================== BAB I PENDAHULUAN ====================== -->
+<section class="page">
+    <h1 class="bab-title">BAB I<br>PENDAHULUAN</h1>
+
+    <h2 class="section">1.1&nbsp;&nbsp;Latar Belakang</h2>
+    <p>Pesatnya perkembangan teknologi informasi dan komunikasi telah membawa perubahan fundamental di berbagai sektor kehidupan, tak terkecuali dalam industri ritel dan fashion. Transformasi digital ini telah mengubah cara masyarakat mencari, membandingkan, dan membeli pakaian. Jika di masa lalu pembelian baju merupakan proses yang mengharuskan pelanggan datang langsung ke toko fisik untuk melihat model, ukuran, dan stok, kini kemudahan dan kecepatan akses melalui platform e-commerce menjadi ekspektasi utama. Hal ini didorong oleh gaya hidup modern yang serba cepat serta kebutuhan akan fleksibilitas dalam berbelanja kapan saja dan di mana saja.</p>
+
+    <p>Berbagai pelaku usaha fashion telah merespons pergeseran ini dengan mengembangkan toko online. Namun, meskipun jumlah platform terus bertambah, tidak semuanya mampu menghadirkan pengalaman pengguna (<i>user experience</i>) yang optimal atau antarmuka pengguna (<i>user interface</i>) yang intuitif. Pelanggan seringkali dihadapkan pada navigasi yang rumit, proses pemesanan yang panjang, perhitungan ongkos kirim yang tidak transparan, kesulitan dalam menelusuri ulasan produk, atau bahkan kendala teknis yang menghambat proses pembelian. Akibatnya, calon pembeli mungkin merasa frustrasi dan beralih ke platform lain yang menawarkan kemudahan lebih.</p>
+
+    <p>Melihat celah tersebut, perancangan sebuah website e-commerce fashion yang efisien, <i>user-friendly</i>, andal, dan aman menjadi sebuah urgensi. Website harus mampu menyajikan informasi produk secara akurat dan terkini, mendukung pencarian dan pemfilteran berdasarkan kategori, menyediakan keranjang belanja yang persisten, melakukan perhitungan ongkos kirim berbasis lokasi pelanggan, hingga memfasilitasi proses pemesanan dan pembuatan invoice secara terintegrasi. Berdasarkan kebutuhan tersebut, makalah ini akan membahas perancangan <i>Ruang Baju</i>, sebuah website e-commerce fashion <i>unisex</i> untuk segmen anak-anak hingga remaja yang dibangun di atas <i>framework</i> Laravel dan panel administrasi Filament, dengan tujuan menghadirkan solusi yang tidak hanya fungsional, tetapi juga memberikan nilai tambah signifikan bagi penggunanya.</p>
+
+    <h2 class="section">1.2&nbsp;&nbsp;Manfaat</h2>
+    <p>Manfaat dari perancangan Website E-Commerce Fashion Ruang Baju Berbasis Laravel ini sebagai berikut:</p>
+
+    <h3 class="subsection">1.2.1&nbsp;&nbsp;Manfaat bagi pelanggan</h3>
+    <p>Memberikan kemudahan dan kecepatan dalam menjelajahi katalog produk, menambahkan barang ke keranjang, melakukan <i>checkout</i> dengan estimasi ongkos kirim yang transparan, serta memantau status pesanan secara <i>real-time</i> kapan saja dan di mana saja. Hal ini meningkatkan kenyamanan dan efisiensi dalam proses berbelanja pakaian secara daring.</p>
+
+    <h3 class="subsection">1.2.2&nbsp;&nbsp;Manfaat bagi pemilik toko</h3>
+    <p>Membuka jalur penjualan baru dan memperluas jangkauan pasar tanpa harus bergantung sepenuhnya pada toko fisik atau <i>marketplace</i> pihak ketiga. Panel administrasi Filament memungkinkan pemilik mengelola produk, pesanan, ulasan pelanggan, serta laporan penjualan secara terpusat sehingga dapat meningkatkan volume penjualan dan profitabilitas.</p>
+
+    <h3 class="subsection">1.2.3&nbsp;&nbsp;Manfaat bagi industri ritel fashion</h3>
+    <p>Mendorong digitalisasi dan efisiensi dalam proses transaksi ritel, sekaligus meningkatkan pengalaman pelanggan secara keseluruhan melalui inovasi teknologi seperti perhitungan ongkos kirim berbasis koordinat geografis, sistem ulasan produk, dan otentikasi <i>Single Sign-On</i> (SSO).</p>
+
+    <h2 class="section">1.3&nbsp;&nbsp;Tujuan</h2>
+    <p>Tujuan dari Perancangan Website E-Commerce Fashion Ruang Baju Berbasis Laravel ini sebagai berikut:</p>
+    <ol class="num">
+        <li>Merancang dan mengembangkan website e-commerce fashion yang fungsional dan responsif, sehingga dapat diakses dengan mudah dari berbagai perangkat baik <i>desktop</i> maupun <i>mobile</i>.</li>
+        <li>Menyediakan antarmuka pengguna yang intuitif dengan tema visual <i>glassmorphism</i> serta pengalaman pengguna yang optimal untuk mempermudah seluruh proses, mulai dari penjelajahan katalog, penambahan ke keranjang, hingga <i>checkout</i>.</li>
+        <li>Mengimplementasikan fitur pencarian, pemfilteran berdasarkan kategori, perhitungan ongkos kirim berbasis lokasi, manajemen ulasan produk, serta pembuatan invoice elektronik secara otomatis.</li>
+        <li>Membangun sistem yang terstruktur, aman, dan mudah dipelihara melalui pola arsitektur Model-View-Controller (MVC) Laravel sebagai dasar yang kokoh untuk pengembangan lebih lanjut.</li>
+    </ol>
+
+    <h2 class="section">1.4&nbsp;&nbsp;Ruang Lingkup</h2>
+    <p>Ruang lingkup perancangan Website E-Commerce Fashion Ruang Baju ini mencakup pembangunan sebuah platform digital terperinci yang memungkinkan pelanggan untuk melakukan seluruh proses pembelian secara daring, mulai dari registrasi akun (termasuk melalui Google SSO), penjelajahan katalog produk berdasarkan kategori dan kata kunci, penambahan barang ke keranjang berbasis basis data, pengelolaan alamat pengiriman, perhitungan ongkos kirim otomatis menggunakan formula <i>Haversine</i>, proses <i>checkout</i> dengan pembuatan invoice dan nomor <i>virtual account</i>, hingga pemberian ulasan dan rating terhadap produk yang telah dibeli. Selain itu, sistem ini juga dilengkapi dengan modul administrasi berbasis Filament yang memfasilitasi pengelolaan data produk, pesanan, pengguna, pengaturan toko, serta laporan analitik berupa <i>widget</i> ringkasan, grafik pesanan, dan daftar pesanan terbaru, dengan dukungan teknologi <i>backend</i> Laravel 10, basis data relasional MySQL, serta antarmuka <i>frontend</i> berbasis Blade dengan Tailwind CSS dan Alpine.js yang responsif dan interaktif.</p>
+</section>
+
+<!-- ====================== BAB II LANDASAN TEORI ====================== -->
+<section class="page">
+    <h1 class="bab-title">BAB II<br>LANDASAN TEORI</h1>
+
+    <h2 class="section">2.1&nbsp;&nbsp;Teori Dasar</h2>
+
+    <h3 class="subsection">2.1.1&nbsp;&nbsp;Definisi Website</h3>
+    <p>Menurut Taufik Asra (2024), website adalah kumpulan halaman web yang saling terhubung, dapat diakses publik melalui internet, dan berfungsi sebagai wadah untuk menyajikan beragam konten digital. Konten ini bisa berupa teks, gambar, video, audio, dan tautan yang memandu pengguna menjelajahi informasi. Setiap website disimpan di <i>server web</i> dan dapat diakses menggunakan <i>browser</i> melalui <i>Uniform Resource Locator</i> (URL) atau nama domainnya. Dalam konteks bisnis, website tidak hanya berperan sebagai sarana penyebaran informasi, melainkan juga sebagai kanal transaksional yang memungkinkan terjadinya interaksi dua arah antara pelaku usaha dan pelanggan.</p>
+
+    <h3 class="subsection">2.1.2&nbsp;&nbsp;E-Commerce</h3>
+    <p>E-commerce atau perdagangan elektronik adalah aktivitas jual beli barang dan jasa yang dilakukan melalui jaringan internet, di mana proses penawaran, pemesanan, pembayaran, dan pengiriman dilakukan secara digital (Yusuf &amp; Rahayu, 2020). Dalam konteks yang lebih luas, e-commerce merupakan bagian integral dari sistem distribusi modern yang menghubungkan penjual dan pembeli tanpa dibatasi ruang dan waktu. Proses transaksi pada platform e-commerce umumnya melibatkan tahapan registrasi akun pengguna, pemilihan produk dari katalog, penambahan ke keranjang belanja, pengisian alamat pengiriman, perhitungan ongkos kirim, hingga konfirmasi pembayaran. Hasil dari proses transaksi yang berhasil adalah diterbitkannya invoice atau bukti pemesanan elektronik yang menjadi dasar legal bagi penjual untuk memproses dan mengirimkan barang kepada pelanggan.</p>
+
+    <h2 class="section">2.2&nbsp;&nbsp;Teknologi Yang Digunakan</h2>
+
+    <h3 class="subsection">2.2.1&nbsp;&nbsp;HTML (Hypertext Markup Language)</h3>
+    <p>HTML adalah bahasa markah standar yang fundamental dalam pembentukan dan penyusunan struktur konten pada halaman web (Mustaqbal, Firdaus, &amp; Handayani, 2017). Sebagai kerangka utama, HTML mendefinisikan elemen-elemen penyusun antarmuka pengguna seperti judul, paragraf, daftar, tabel, gambar, dan formulir input yang krusial untuk menampilkan informasi produk, detail keranjang belanja, formulir alamat pengiriman, dan halaman invoice secara terstruktur pada Website Ruang Baju. Pada implementasi proyek ini, HTML disusun melalui <i>template engine</i> Blade bawaan Laravel yang memungkinkan penggunaan komponen yang dapat digunakan ulang seperti <i>star-rating</i>, <i>review-form</i>, dan <i>review-list</i>.</p>
+
+    <h3 class="subsection">2.2.2&nbsp;&nbsp;Tailwind CSS</h3>
+    <p>Tailwind CSS adalah <i>framework</i> CSS berbasis <i>utility-first</i> yang menyediakan kelas-kelas siap pakai untuk mendeskripsikan presentasi visual halaman web tanpa perlu menulis CSS dari nol (Suwandi &amp; Syarif, 2020). Berbeda dengan pendekatan CSS tradisional yang berorientasi pada komponen, Tailwind memungkinkan pengembang menyusun tampilan langsung pada <i>markup</i> dengan kombinasi kelas seperti pengaturan warna, <i>spacing</i>, tipografi, dan tata letak. Pada Website Ruang Baju, Tailwind digunakan bersama dengan tema <i>glassmorphism</i> kustom yang mendefinisikan palet warna emas (<i>brand</i>) dan permukaan gelap (<i>surface</i>), serta tipografi Inter dan Playfair Display, sehingga menghasilkan tampilan elegan, profesional, dan konsisten di seluruh halaman.</p>
+
+    <h3 class="subsection">2.2.3&nbsp;&nbsp;JavaScript dan Alpine.js</h3>
+    <p>JavaScript adalah bahasa pemrograman yang dirancang untuk membuat halaman web menjadi lebih interaktif dan dinamis (Supriyanti &amp; Indriyani, 2021). Pada Website Ruang Baju, JavaScript dimanfaatkan untuk validasi <i>input</i> formulir secara <i>real-time</i>, pembaruan tampilan tanpa <i>reload</i> halaman, serta interaksi pada komponen seperti pemilihan rating bintang dan konfirmasi penghapusan ulasan. Untuk menjaga ukuran <i>bundle</i> tetap ringkas, proyek ini menggunakan Alpine.js, sebuah <i>framework</i> JavaScript ringan yang menyediakan sintaks deklaratif langsung pada atribut HTML untuk mengelola <i>state</i> komponen. Pendekatan ini selaras dengan filosofi Laravel yang menempatkan logika <i>presentation</i> sederhana di sisi klien dan logika bisnis utama di sisi server.</p>
+
+    <h3 class="subsection">2.2.4&nbsp;&nbsp;Laravel</h3>
+    <p>Laravel adalah <i>framework</i> PHP <i>open-source</i> yang dirancang untuk memudahkan dan mempercepat pengembangan aplikasi web dengan pola arsitektur <i>Model-View-Controller</i> (MVC) (Nurhayati, Mulyani, &amp; Kurniawan, 2021). Laravel menyediakan beragam fitur bawaan seperti sistem <i>routing</i>, <i>migration</i> basis data, Eloquent ORM, <i>middleware</i>, <i>form request validation</i>, dan <i>service container</i> untuk <i>dependency injection</i>, sehingga pengembang dapat memfokuskan perhatian pada logika bisnis. Pada proyek Ruang Baju, Laravel versi 10 dipilih sebagai <i>backend</i> utama. Logika bisnis multi-langkah seperti proses <i>checkout</i> dan perhitungan ongkos kirim dipisahkan ke dalam lapisan <i>service</i> (<code>CheckoutService</code> dan <code>ShippingService</code>) untuk menjaga <i>controller</i> tetap ringkas dan mudah diuji menggunakan <i>framework</i> pengujian Pest.</p>
+
+    <h3 class="subsection">2.2.5&nbsp;&nbsp;Filament</h3>
+    <p>Filament adalah <i>package</i> Laravel yang digunakan untuk membangun panel administrasi modern dengan cepat berbasis komponen Livewire dan Tailwind CSS. Filament menyediakan abstraksi tingkat tinggi berupa <i>Resource</i>, <i>Page</i>, dan <i>Widget</i> yang memungkinkan pengembang membuat antarmuka CRUD lengkap dengan formulir, tabel, filter, dan aksi hanya dengan mendefinisikan kelas PHP. Pada Website Ruang Baju, Filament versi 3.3 digunakan untuk menyediakan panel administrasi yang dapat diakses melalui <i>route</i> <code>/admin</code>, mencakup pengelolaan produk, pesanan, pengguna, dan pengaturan toko. Selain itu, panel ini juga dilengkapi <i>widget</i> analitik berupa <i>StatsOverview</i>, <i>OrderChart</i>, dan <i>RecentOrders</i> untuk mendukung pengambilan keputusan bisnis.</p>
+
+    <h2 class="section">2.3&nbsp;&nbsp;Basis Data</h2>
+
+    <h3 class="subsection">2.3.1&nbsp;&nbsp;MySQL</h3>
+    <p>MySQL adalah salah satu sistem manajemen basis data relasional (<i>Relational Database Management System</i> &mdash; RDBMS) <i>open-source</i> yang paling populer di dunia, menjadikannya pilihan fundamental dalam perancangan Website E-Commerce Fashion Ruang Baju ini (Yusuf &amp; Rahayu, 2020). MySQL berperan sebagai tempat penyimpanan sentral untuk seluruh data penting yang dibutuhkan oleh sistem, mencakup data pengguna, produk, kategori, keranjang belanja, pesanan, item pesanan, ulasan, alamat pelanggan, lokasi, serta pengaturan toko. Skema basis data dirancang dengan relasi yang ketat antar tabel, antara lain pesanan terhubung dengan pengguna, item pesanan terhubung dengan pesanan dan produk, serta ulasan terhubung dengan pengguna dan produk dengan pembatas keunikan agar setiap pengguna hanya dapat memberikan satu ulasan per produk. Keunggulan MySQL terletak pada performa yang cepat, skalabilitas, dan keandalan dalam mengelola volume data yang besar, sehingga sangat cocok untuk aplikasi e-commerce dengan banyak pengguna dan transaksi.</p>
+</section>
+
+<!-- ====================== BAB III PEMBAHASAN ====================== -->
+<section class="page">
+    <h1 class="bab-title">BAB III<br>PEMBAHASAN</h1>
+
+    <h2 class="section">3.1&nbsp;&nbsp;Analisis Kebutuhan Sistem</h2>
+    <p>Tahap analisis kebutuhan sistem adalah fondasi awal yang penting untuk memastikan Website E-Commerce Fashion Ruang Baju yang dirancang mampu memenuhi ekspektasi pengguna serta menjalankan proses bisnis penjualan secara optimal. Identifikasi kebutuhan dilakukan dengan mengumpulkan data terkait fungsionalitas yang harus tersedia dan kualitas sistem yang diharapkan oleh pelanggan maupun pemilik toko.</p>
+
+    <h3 class="subsection">3.1.1&nbsp;&nbsp;Kebutuhan Fungsional</h3>
+    <p>Kebutuhan fungsional mendefinisikan fitur-fitur spesifik yang harus dioperasikan oleh website, yang dikelompokkan berdasarkan peran pengguna sebagai berikut:</p>
+
+    <p class="no-indent"><b>A. Untuk Pelanggan (User):</b></p>
+    <ol class="num">
+        <li>Pelanggan dapat melakukan registrasi akun melalui formulir <i>email</i>/<i>password</i> maupun melalui <i>Single Sign-On</i> (SSO) Google.</li>
+        <li>Pelanggan dapat menelusuri katalog produk dan melakukan pencarian berdasarkan kata kunci serta pemfilteran berdasarkan kategori (Kaos, Kemeja, Celana, Jaket, Aksesoris).</li>
+        <li>Sistem harus menampilkan detail produk lengkap beserta nama, deskripsi, harga, stok, gambar, rata-rata <i>rating</i>, dan jumlah ulasan.</li>
+        <li>Pelanggan dapat menambahkan produk ke keranjang belanja yang persisten di basis data, mengubah jumlah, serta menghapus item dari keranjang.</li>
+        <li>Pelanggan dapat memilih item yang akan di-<i>checkout</i>, mengisi alamat pengiriman, melihat estimasi ongkos kirim yang dihitung otomatis dari koordinat lokasi, serta menyelesaikan pemesanan.</li>
+        <li>Sistem menerbitkan invoice dan nomor <i>virtual account</i> setelah pesanan berhasil dibuat.</li>
+        <li>Pelanggan dapat melihat riwayat pesanan beserta status terkini, serta memberikan ulasan dan <i>rating</i> 1&ndash;5 bintang terhadap produk yang telah dibeli.</li>
+        <li>Pelanggan dapat mengelola profil pribadi, mengubah <i>password</i>, dan menghapus akun.</li>
+    </ol>
+
+    <p class="no-indent"><b>B. Untuk Administrator (Admin):</b></p>
+    <ol class="num">
+        <li>Admin dapat melakukan <i>login</i> ke panel administrasi Filament pada <i>route</i> <code>/admin</code> dengan hak akses berbasis peran.</li>
+        <li>Admin dapat mengelola data produk (menambah, mengubah, menghapus, mengunggah gambar) beserta kategori, harga, dan stok.</li>
+        <li>Admin dapat melihat seluruh pesanan yang masuk serta memajukan status pesanan mengikuti alur <i>pending payment</i> &rarr; <i>confirmed</i> &rarr; <i>processing</i> &rarr; <i>shipped</i> &rarr; <i>completed</i>, atau membatalkannya bila perlu.</li>
+        <li>Admin dapat mengelola data pengguna terdaftar dan mencetak laporan produk maupun pengguna.</li>
+        <li>Admin dapat mengatur konfigurasi toko, antara lain alamat asal pengiriman beserta koordinatnya, tarif ongkos kirim per kilometer, serta batas minimum dan maksimum ongkos kirim.</li>
+        <li>Sistem menyajikan <i>dashboard</i> analitik berupa ringkasan statistik (<i>StatsOverview</i>), grafik pesanan (<i>OrderChart</i>), serta daftar pesanan terbaru (<i>RecentOrders</i>) untuk mendukung pengambilan keputusan.</li>
+    </ol>
+
+    <h3 class="subsection">3.1.2&nbsp;&nbsp;Kebutuhan Non-Fungsional</h3>
+    <p>Kebutuhan non-fungsional berfokus pada kualitas dan atribut operasional sistem yang menjamin website dapat bekerja secara optimal, sebagai berikut:</p>
+    <ol class="num">
+        <li>Website harus memiliki waktu respons yang cepat baik saat menampilkan katalog, perhitungan ongkos kirim, maupun pemrosesan transaksi <i>checkout</i>, termasuk dengan menghindari kueri N+1 melalui pemanfaatan <i>eager loading</i> Eloquent.</li>
+        <li>Sistem harus melindungi data pribadi pelanggan dan informasi pesanan melalui mekanisme proteksi CSRF pada seluruh formulir, otentikasi <i>middleware</i> pada seluruh <i>route</i> pelanggan, serta pembatasan akses <i>panel</i> administrasi melalui <i>gate</i> berbasis peran.</li>
+        <li>Antarmuka pengguna harus intuitif, responsif, dan konsisten di seluruh halaman dengan memanfaatkan tema <i>glassmorphism</i> berbasis Tailwind CSS sehingga mudah digunakan oleh pelanggan dari berbagai latar belakang.</li>
+        <li>Arsitektur sistem dirancang agar mampu mengakomodasi peningkatan jumlah pengguna, produk, dan transaksi di masa depan, antara lain melalui pemisahan logika bisnis ke lapisan <i>service</i>, transaksi basis data atomik untuk pengurangan stok, serta pengujian otomatis menggunakan <i>framework</i> Pest sebagai jaring pengaman terhadap regresi.</li>
+    </ol>
+</section>
+
+    <h2 class="section">3.2&nbsp;&nbsp;Desain Sistem</h2>
+    <p>Desain sistem adalah fase krusial setelah analisis kebutuhan, yang berfungsi untuk menerjemahkan kebutuhan fungsional dan non-fungsional ke dalam arsitektur teknis yang memandu proses pengembangan website.</p>
+
+    <h3 class="subsection">3.2.1&nbsp;&nbsp;Desain Arsitektur Sistem</h3>
+    <p>Website Ruang Baju menggunakan arsitektur <i>client-server</i> dengan pola <i>Model-View-Controller</i> (MVC) bawaan Laravel. Sisi klien (<i>browser</i> pelanggan) mengirimkan permintaan HTTP seperti penelusuran katalog, penambahan ke keranjang, atau <i>submit checkout</i> ke <i>server web</i> yang menjalankan aplikasi Laravel. <i>Controller</i> menerima permintaan tersebut, mendelegasikan logika bisnis ke lapisan <i>service</i> (<code>CheckoutService</code> dan <code>ShippingService</code>), berinteraksi dengan basis data MySQL melalui Eloquent ORM, kemudian mengembalikan respons berupa <i>view</i> Blade yang dirender bersama Tailwind CSS dan Alpine.js. Sistem juga menyediakan panel administrasi terpisah berbasis Filament pada <i>route</i> <code>/admin</code> yang digunakan oleh pemilik toko untuk mengelola data dan memantau analitik. Untuk otentikasi, sistem mengintegrasikan Laravel Breeze sebagai mekanisme dasar <i>email</i>/<i>password</i> dan Laravel Socialite untuk Google SSO.</p>
+
+    <h3 class="subsection">3.2.2&nbsp;&nbsp;Desain Antarmuka Pengguna</h3>
+    <p>Antarmuka pengguna pada Website Ruang Baju dirancang dengan tema <i>glassmorphism</i> berbasis Tailwind CSS, memanfaatkan kombinasi warna emas hangat (<i>brand</i>) dan permukaan gelap (<i>surface</i>), serta tipografi Inter untuk teks dan Playfair Display untuk judul. Halaman-halaman utama yang dirancang antara lain:</p>
+    <ol class="alpha">
+        <li>Halaman Login dan Register (termasuk tombol Google SSO)</li>
+        <li>Halaman Beranda dengan <i>hero</i>, pencarian, filter kategori, dan grid produk</li>
+        <li>Halaman Katalog Produk Lengkap</li>
+        <li>Halaman Detail Produk dengan ulasan dan formulir <i>review</i></li>
+        <li>Halaman Keranjang Belanja</li>
+        <li>Halaman <i>Checkout</i> dengan pemilihan alamat dan kalkulasi ongkos kirim</li>
+        <li>Halaman Invoice dengan nomor <i>virtual account</i></li>
+        <li>Halaman Riwayat Pesanan</li>
+        <li>Halaman Profil Pengguna</li>
+        <li>Panel Administrasi Filament: <i>Dashboard</i>, Manajemen Produk, Pesanan, Pengguna, dan Pengaturan Toko</li>
+    </ol>
+
+    <h3 class="subsection">3.2.3&nbsp;&nbsp;Desain Perancangan Alur Sistem</h3>
+    <p>Alur utama transaksi pada Website Ruang Baju digambarkan sebagai berikut: pelanggan melakukan registrasi atau <i>login</i>, kemudian menelusuri katalog dan memilih produk. Produk yang dipilih ditambahkan ke keranjang yang tersimpan secara persisten pada tabel <code>cart_items</code>. Saat hendak melakukan pembelian, pelanggan memilih item dari keranjang yang akan di-<i>checkout</i>. Sistem menyimpan ID produk terpilih ke <i>session</i> melalui aksi <code>prepare</code>, lalu mengarahkan pelanggan ke halaman <i>checkout</i> tempat alamat pengiriman dipilih dan ongkos kirim dihitung secara otomatis dari koordinat lokasi menggunakan formula <i>Haversine</i>.</p>
+    <p>Setelah pelanggan mengonfirmasi pesanan, <code>CheckoutService</code> menjalankan transaksi atomik yang melakukan validasi stok, pembuatan baris <code>orders</code> dan <code>order_items</code>, pengurangan stok produk dengan <i>conditional decrement</i> (<code>where('stock', '&gt;=', $qty)-&gt;decrement(...)</code>) untuk mencegah <i>oversell</i>, pengosongan keranjang, serta penyimpanan alamat sebagai alamat <i>default</i> untuk penggunaan berikutnya. Setelah transaksi berhasil, sistem menerbitkan invoice dengan nomor <i>virtual account</i> dan mengarahkan pelanggan ke halaman invoice. Pesanan kemudian dapat dipantau oleh admin melalui Filament dan dimajukan statusnya mengikuti alur <i>pending payment</i> &rarr; <i>confirmed</i> &rarr; <i>processing</i> &rarr; <i>shipped</i> &rarr; <i>completed</i>.</p>
+</section>
+
+<!-- ====================== BAB III lanjutan ====================== -->
+<section class="page">
+    <h2 class="section">3.3&nbsp;&nbsp;Implementasi Sistem</h2>
+    <p>Tahap implementasi adalah realisasi dari desain yang telah dibuat, di mana kode program ditulis dan dijalankan pada lingkungan pengembangan lokal sebelum siap untuk dirilis.</p>
+
+    <h3 class="subsection">3.3.1&nbsp;&nbsp;Lingkungan Pengembangan</h3>
+    <ol class="alpha">
+        <li>Sistem Operasi: Windows 10/11.</li>
+        <li><i>Web Server</i>: Laravel Sail / <i>built-in server</i> Artisan (<code>php artisan serve</code>).</li>
+        <li><i>Database Server</i>: MySQL yang dikelola dengan phpMyAdmin atau klien sejenis.</li>
+        <li>Bahasa Pemrograman: PHP 8.1+, HTML, JavaScript.</li>
+        <li><i>Framework Backend</i>: Laravel 10 dengan <i>package</i> Filament 3.3, Laravel Breeze, dan Laravel Socialite.</li>
+        <li><i>Framework Frontend</i>: Tailwind CSS 3 dan Alpine.js, dibangun menggunakan Vite 5.</li>
+        <li><i>Framework</i> Pengujian: Pest 2 berbasis PHPUnit.</li>
+        <li>Editor Kode: Visual Studio Code.</li>
+    </ol>
+
+    <h2 class="section">3.4&nbsp;&nbsp;Hasil Pengujian</h2>
+    <p>Pengujian Website Ruang Baju dilakukan menggunakan dua pendekatan utama, yaitu pengujian otomatis dengan <i>framework</i> Pest dan pengujian manual untuk memastikan alur transaksi berjalan sebagaimana mestinya.</p>
+
+    <p class="no-indent"><b>A. Pengujian Otomatis</b></p>
+    <p>Pengujian otomatis disusun untuk menjaga regresi pada fitur-fitur kritis. Cakupan pengujian meliputi:</p>
+    <ol class="num">
+        <li><i>Cart</i>: penambahan ke keranjang, peningkatan jumlah, penghapusan, tampilan, serta <i>auth guard</i>.</li>
+        <li><i>Checkout</i>: persiapan, validasi, pemrosesan, pemeriksaan stok, dan akses invoice.</li>
+        <li><i>Reviews</i>: pembuatan, pembaruan, penghapusan, validasi, serta <i>auth guard</i>.</li>
+        <li><i>Shipping</i>: pengambilan daftar provinsi dan kota, perhitungan ongkos kirim, penyimpanan alamat, dan validasi <i>input</i>.</li>
+        <li>Otentikasi: <i>login</i>, registrasi, <i>logout</i>.</li>
+        <li>Profil: tampilan, pembaruan, dan penghapusan akun.</li>
+        <li><i>ShippingService</i>: pengujian unit untuk formula <i>Haversine</i>.</li>
+        <li><i>StoreSetting</i>: pengujian unit untuk pengaturan toko.</li>
+    </ol>
+
+    <p class="no-indent"><b>B. Pengujian Manual (Skenario Pelanggan)</b></p>
+    <p>Skenario yang diujikan untuk memvalidasi pengalaman pelanggan adalah sebagai berikut:</p>
+    <ol class="num">
+        <li>Pelanggan baru melakukan registrasi melalui formulir <i>email</i>/<i>password</i> atau Google SSO, kemudian diarahkan ke halaman beranda.</li>
+        <li>Pelanggan menelusuri katalog, melakukan pencarian dengan kata kunci, dan menggunakan filter kategori untuk menemukan produk.</li>
+        <li>Pelanggan membuka halaman detail produk, melihat ulasan, dan menambahkan produk ke keranjang dengan kuantitas tertentu.</li>
+        <li>Pelanggan membuka halaman keranjang, memilih item yang akan di-<i>checkout</i>, kemudian melanjutkan ke halaman <i>checkout</i>.</li>
+        <li>Pelanggan memilih alamat pengiriman; sistem secara otomatis menghitung ongkos kirim berdasarkan koordinat lokasi melalui formula <i>Haversine</i>.</li>
+        <li>Pelanggan mengonfirmasi pesanan; sistem membuat invoice beserta nomor <i>virtual account</i>.</li>
+        <li>Pelanggan membuka halaman riwayat pesanan untuk memantau status, dan setelah pesanan tiba dapat memberikan ulasan dan <i>rating</i>.</li>
+        <li>Admin melakukan <i>login</i> ke panel Filament untuk melihat <i>dashboard</i> analitik, memajukan status pesanan, serta memperbarui data produk dan pengaturan toko.</li>
+    </ol>
+    <p>Berdasarkan kedua jenis pengujian tersebut, seluruh fungsionalitas inti website berjalan sesuai dengan kebutuhan fungsional yang telah didefinisikan pada subbab 3.1.1.</p>
+</section>
+
+<!-- ====================== BAB III - 3.5 Tampilan Website ====================== -->
+<section class="page">
+    <h2 class="section">3.5&nbsp;&nbsp;Tampilan Website</h2>
+    <p>Bagian ini menampilkan hasil implementasi antarmuka pengguna pada Website E-Commerce Fashion Ruang Baju, mulai dari halaman otentikasi, pelanggan, hingga panel administrasi.</p>
+
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Login ]</div>
+        <div class="keterangan">Gambar 3.1 Tampilan Halaman Login</div>
+    </div>
+
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Register ]</div>
+        <div class="keterangan">Gambar 3.2 Tampilan Halaman Register</div>
+    </div>
+</section>
+
+<section class="page">
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Beranda ]</div>
+        <div class="keterangan">Gambar 3.3 Tampilan Halaman Beranda</div>
+    </div>
+
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Detail Produk ]</div>
+        <div class="keterangan">Gambar 3.4 Tampilan Halaman Detail Produk</div>
+    </div>
+</section>
+
+<section class="page">
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Keranjang ]</div>
+        <div class="keterangan">Gambar 3.5 Tampilan Halaman Keranjang Belanja</div>
+    </div>
+
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Checkout ]</div>
+        <div class="keterangan">Gambar 3.6 Tampilan Halaman Checkout</div>
+    </div>
+</section>
+
+<section class="page">
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Invoice ]</div>
+        <div class="keterangan">Gambar 3.7 Tampilan Halaman Invoice</div>
+    </div>
+
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Halaman Riwayat Pesanan ]</div>
+        <div class="keterangan">Gambar 3.8 Tampilan Halaman Riwayat Pesanan</div>
+    </div>
+</section>
+
+<section class="page">
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Dashboard Admin Filament ]</div>
+        <div class="keterangan">Gambar 3.9 Tampilan Dashboard Panel Administrasi</div>
+    </div>
+
+    <div class="gambar-wrap">
+        <div class="placeholder">[ Tampilan Manajemen Produk Admin ]</div>
+        <div class="keterangan">Gambar 3.10 Tampilan Manajemen Produk pada Panel Admin</div>
+    </div>
+</section>
+
+<!-- ====================== BAB IV PENUTUP ====================== -->
+<section class="page">
+    <h1 class="bab-title">BAB IV<br>PENUTUP</h1>
+
+    <h2 class="section">4.1&nbsp;&nbsp;Kesimpulan</h2>
+    <p>Berdasarkan perancangan dan pembahasan yang telah dilakukan dalam makalah ini, dapat disimpulkan bahwa Website E-Commerce Fashion Ruang Baju Berbasis Laravel telah berhasil dirancang sebagai solusi digital yang fungsional dan responsif. Proyek ini secara efektif menjawab kebutuhan akan platform e-commerce yang sederhana namun lengkap untuk segmen pakaian <i>unisex</i> anak hingga remaja, sesuai dengan tujuan yang ditetapkan pada Bab I.</p>
+    <p>Pemanfaatan Laravel 10 sebagai <i>framework</i> utama terbukti mampu menyediakan arsitektur <i>Model-View-Controller</i> (MVC) yang terstruktur, mempercepat proses pengembangan, serta mengintegrasikan fitur-fitur esensial seperti otentikasi, manajemen <i>route</i>, validasi <i>form request</i>, dan interaksi basis data melalui Eloquent ORM. Pemisahan logika bisnis ke lapisan <i>service</i> (<code>CheckoutService</code> dan <code>ShippingService</code>) menjaga <i>controller</i> tetap ringkas, sekaligus memudahkan pengujian otomatis menggunakan <i>framework</i> Pest. Penggunaan Filament 3.3 mempercepat penyediaan panel administrasi yang lengkap dengan <i>resource</i> CRUD, <i>widget</i> analitik, dan halaman pengaturan toko.</p>
+    <p>Pada sisi <i>frontend</i>, kombinasi Blade, Tailwind CSS dengan tema <i>glassmorphism</i> kustom, serta Alpine.js berperan krusial dalam membangun antarmuka pengguna yang intuitif, menarik, dan responsif di berbagai perangkat, sehingga memudahkan pelanggan dalam menelusuri katalog, menambahkan barang ke keranjang, melakukan <i>checkout</i> dengan ongkos kirim yang dihitung otomatis, hingga memberikan ulasan terhadap produk. MySQL sebagai sistem manajemen basis data relasional berfungsi sebagai tempat penyimpanan terpusat yang andal untuk seluruh data pengguna, produk, keranjang, pesanan, ulasan, dan pengaturan toko, dengan relasi antar tabel yang ketat untuk menjaga konsistensi data.</p>
+    <p>Hasil pengujian otomatis maupun manual menunjukkan bahwa fungsionalitas inti website&mdash;mulai dari registrasi (termasuk Google SSO), <i>login</i>, penelusuran katalog, manajemen keranjang, perhitungan ongkos kirim berbasis koordinat, <i>checkout</i> dengan invoice dan <i>virtual account</i>, sistem ulasan, hingga panel administrasi&mdash;berjalan sesuai dengan kebutuhan fungsional yang telah didefinisikan. Dengan demikian, website ini tidak hanya memberikan kemudahan dan kecepatan bagi pelanggan, tetapi juga membuka jalur penjualan baru bagi pemilik toko serta mendorong digitalisasi industri ritel fashion secara keseluruhan.</p>
+
+    <h2 class="section">4.2&nbsp;&nbsp;Saran</h2>
+    <p>Guna meningkatkan kualitas dan fungsionalitas Website E-Commerce Fashion Ruang Baju di masa mendatang, beberapa saran yang dapat dipertimbangkan antara lain integrasi <i>payment gateway</i> nyata seperti Midtrans atau Xendit untuk menggantikan simulasi <i>virtual account</i>, integrasi API jasa kurir (JNE, J&amp;T, SiCepat) untuk perhitungan ongkos kirim yang lebih akurat sebagai pelengkap formula <i>Haversine</i> internal, serta penambahan fitur notifikasi otomatis melalui <i>email</i> atau WhatsApp untuk pembaruan status pesanan. Selain itu, fitur <i>wishlist</i>, varian produk berbasis ukuran dan warna dengan stok terpisah, kupon dan diskon, serta program loyalitas pelanggan dapat ditambahkan untuk memperkaya pengalaman belanja. Dari sisi keamanan dan skalabilitas, disarankan untuk menerapkan otentikasi dua faktor pada akun admin, optimasi <i>cache</i> menggunakan Redis, serta penyiapan <i>continuous integration</i> dan <i>continuous deployment</i> agar perubahan kode dapat dirilis dengan aman dan cepat.</p>
+</section>
+
+<!-- ====================== DAFTAR PUSTAKA ====================== -->
+<section class="page">
+    <h1 class="bab-title">DAFTAR PUSTAKA</h1>
+
+    <p class="pustaka">Mustaqbal, M. S., Firdaus, R. F., &amp; Handayani, V. A. (2017). Implementasi <i>HyperText Markup Language</i> (HTML) dan <i>Cascading Style Sheet</i> (CSS) untuk Membangun Website Sekolah. <i>Jurnal Ilmiah FIFO</i>, 9(1), 1&ndash;9.</p>
+
+    <p class="pustaka">Nurhayati, A. K., Mulyani, S., &amp; Kurniawan, A. (2021). Analisis Perbandingan <i>Framework</i> CodeIgniter dan Laravel dalam Pengembangan Aplikasi Web. <i>Jurnal Teknologi Informasi dan Ilmu Komputer (JTIK)</i>, 8(1), 19&ndash;26.</p>
+
+    <p class="pustaka">Supriyanti, L., &amp; Indriyani, D. (2021). Perancangan Website Reservasi Penginapan Berbasis CodeIgniter. <i>Jurnal Sistem Informasi Bisnis</i>, 11(1), 1&ndash;10.</p>
+
+    <p class="pustaka">Suwandi, Y., &amp; Syarif, A. (2020). Implementasi Model <i>Waterfall</i> dalam Pengembangan Website E-Commerce Studi Kasus Toko Online XYZ. <i>Jurnal Sistem Informasi Bisnis</i>, 10(1), 1&ndash;8.</p>
+
+    <p class="pustaka">Taufik Asra, S. N. K. (2024). Rancang Bangun Sistem Informasi Manajemen Restoran Berbasis Web pada Warunk Upnormal. <i>Jurnal Rekayasa Perangkat Lunak</i>, 4(2), 110&ndash;119. <a href="https://doi.org/10.31294/reputasi.v4i2.2428">https://doi.org/10.31294/reputasi.v4i2.2428</a></p>
+
+    <p class="pustaka">Yusuf, M., &amp; Rahayu, S. E. (2020). Rancang Bangun Sistem Informasi Penjualan Berbasis Web pada Toko Bangunan XYZ. <i>Jurnal Ilmiah SISFO</i>, 4(2), 1&ndash;10.</p>
+</section>
+
+</body>
+</html>

@@ -58,5 +58,8 @@ class ProductSeeder extends Seeder
         foreach ($products as $product) {
             Product::create($product);
         }
+
+        // Generate 30 dummy products via factory
+        Product::factory(30)->create();
     }
 }

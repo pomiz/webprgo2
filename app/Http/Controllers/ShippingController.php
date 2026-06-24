@@ -78,4 +78,32 @@ class ShippingController extends Controller
 
         return response()->json(['success' => true, 'address' => $address]);
     }
+
+    /**
+     * Get courier options with pricing based on base shipping cost.
+     */
+    public function getCouriers(Request $request)
+    {
+        $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $service = new ShippingService();
+        $shipping = $service->calculateShippingCost(
+            (float) $request->latitude,
+            (float) $request->longitude
+        );
+
+        if ($shipping['error']) {
+            return response()->json(['error' => $shipping['error']]);
+        }
+
+        $couriers = $service->getCourierOptions($shipping['cost']);
+
+        return response()->json([
+            'distance_km' => $shipping['distance_km'],
+            'couriers' => $couriers,
+        ]);
+    }
 }

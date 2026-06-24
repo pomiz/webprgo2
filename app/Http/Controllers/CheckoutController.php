@@ -59,6 +59,9 @@ class CheckoutController extends Controller
             'shipping_address' => 'nullable|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'courier' => 'required|string',
+            'courier_name' => 'nullable|string',
+            'courier_estimate' => 'nullable|string',
         ]);
 
         $selectedProductIds = Session::get('checkout_products', []);
@@ -86,6 +89,9 @@ class CheckoutController extends Controller
             'shipping_address' => $request->shipping_address,
             'province' => $request->input('province'),
             'city' => $request->input('city'),
+            'courier' => $request->courier,
+            'courier_name' => $request->courier_name,
+            'courier_estimate' => $request->courier_estimate,
         ]);
 
         if (is_string($result)) {
@@ -106,5 +112,25 @@ class CheckoutController extends Controller
         }
 
         return view('checkout.invoice', compact('order'));
+    }
+
+    /**
+     * Mark the order as paid by the user (simulate payment).
+     */
+    public function pay(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($order->status !== Order::STATUS_PENDING_PAYMENT) {
+            return redirect()->route('invoice.show', $order)
+                ->with('error', 'Pesanan ini sudah dibayar atau dibatalkan.');
+        }
+
+        $order->advance(); // pending_payment → confirmed
+
+        return redirect()->route('invoice.show', $order)
+            ->with('success', 'Pembayaran berhasil dikonfirmasi! Pesanan Anda akan segera diproses.');
     }
 }

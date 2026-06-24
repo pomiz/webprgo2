@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.process');
     Route::get('/invoice/{order}', [CheckoutController::class, 'invoice'])->name('invoice.show');
+    Route::post('/invoice/{order}/pay', [CheckoutController::class, 'pay'])->name('invoice.pay');
 
     // Orders
     Route::get('/orders', [UserController::class, 'orders'])->name('orders.index');
@@ -58,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/shipping/cities', [ShippingController::class, 'getCities'])->name('shipping.cities');
     Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
     Route::post('/shipping/save-address', [ShippingController::class, 'saveAddress'])->name('shipping.save-address');
+    Route::post('/shipping/couriers', [ShippingController::class, 'getCouriers'])->name('shipping.couriers');
 
     // Reviews
     Route::post('/product/{product}/review', [ReviewController::class, 'store'])->name('review.store');
