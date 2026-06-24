@@ -92,7 +92,7 @@ class CheckoutService
                 'shipping_address' => $data['shipping_address'] ?? null,
                 'total_price' => $totalPrice,
                 'status' => Order::STATUS_PENDING_PAYMENT,
-                'virtual_account' => 'VA' . date('Ymd') . Str::upper(Str::random(8)),
+                'virtual_account' => 'QRIS' . date('Ymd') . Str::upper(Str::random(8)),
                 'courier' => $courierName,
             ]);
 

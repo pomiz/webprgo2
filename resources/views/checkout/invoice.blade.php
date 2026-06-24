@@ -116,7 +116,7 @@
             @if($order->status === 'pending_payment')
                 <div class="mt-8 text-center">
                     @php
-                        $qrData = 'VA:' . $order->virtual_account . '|Total:' . $order->total_price . '|Order:' . $order->id;
+                        $qrData = 'QRIS:' . $order->virtual_account . '|Total:' . $order->total_price . '|Order:' . $order->id;
                         $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($qrData);
                     @endphp
                     <img src="{{ $qrUrl }}" alt="QR Pembayaran" class="mx-auto rounded-lg" width="200" height="200">

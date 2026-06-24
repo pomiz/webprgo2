@@ -106,7 +106,7 @@ class OrderResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('virtual_account')
-                    ->label('VA')
+                    ->label('QRIS')
                     ->searchable()
                     ->toggleable(),
 

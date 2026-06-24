@@ -61,7 +61,7 @@ class OrderFactory extends Factory
             'total_price' => $subtotal + $shippingCost,
             'shipping_address' => fake()->address(),
             'status' => $status,
-            'virtual_account' => 'VA' . date('Ymd') . Str::upper(Str::random(8)),
+            'virtual_account' => 'QRIS' . date('Ymd') . Str::upper(Str::random(8)),
             'courier' => $courier,
             'tracking_number' => $trackingNumber,
             'shipped_at' => $shippedAt,
