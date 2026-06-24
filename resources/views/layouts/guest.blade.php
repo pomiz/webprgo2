@@ -12,7 +12,7 @@
 </head>
 <body class="min-h-screen font-sans text-gray-800 dark:text-gray-100 antialiased relative overflow-hidden">
     {{-- Animated gradient background --}}
-    <div class="fixed inset-0 -z-10">
+    <div class="fixed inset-0 -z-10 pointer-events-none">
         <div class="absolute inset-0 bg-gradient-to-br from-brand-50/80 via-purple-50/40 to-blue-50/60 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950"></div>
         {{-- Floating orbs --}}
         <div class="absolute top-1/4 -left-20 w-72 h-72 bg-brand-300/20 dark:bg-brand-600/10 rounded-full blur-3xl animate-pulse"></div>

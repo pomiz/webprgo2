@@ -13,7 +13,7 @@
 
     <div class="fi-simple-layout flex min-h-screen flex-col items-center relative">
         {{-- Animated gradient background --}}
-        <div class="fixed inset-0 -z-10">
+        <div class="fixed inset-0 -z-10 pointer-events-none">
             <div class="absolute inset-0 bg-gradient-to-br from-amber-50/80 via-purple-50/40 to-slate-100/60 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950"></div>
             <div class="absolute top-1/4 -left-20 w-72 h-72 bg-amber-300/20 dark:bg-amber-600/10 rounded-full blur-3xl animate-pulse"></div>
             <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-300/20 dark:bg-purple-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
