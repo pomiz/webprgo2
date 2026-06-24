@@ -14,19 +14,19 @@ class DatabaseSeeder extends Seeder
     {
         // Admin user
         User::firstOrCreate(
-            ['email' => 'ipul@tokobaju.com'],
+            ['email' => 'admin@ruangbaju.com'],
             [
-                'username' => 'ipul',
-                'name' => 'Admin Ipul',
-                'password' => 'ipul12345',
+                'username' => 'admin',
+                'name' => 'Admin Ruang Baju',
+                'password' => 'admin12345',
                 'role' => 'admin',
             ]
         );
-        $this->command->info('User admin (ipul@tokobaju.com) ready.');
+        $this->command->info('User admin (admin@ruangbaju.com) ready.');
 
         // Regular user
         User::firstOrCreate(
-            ['email' => 'faruq@tokobaju.com'],
+            ['email' => 'faruq@ruangbaju.com'],
             [
                 'username' => 'faruq',
                 'name' => 'Faruq',
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'user',
             ]
         );
-        $this->command->info('User (faruq@tokobaju.com) ready.');
+        $this->command->info('User (faruq@ruangbaju.com) ready.');
 
         // Seed locations, products, and orders
         $this->call([

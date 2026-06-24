@@ -267,8 +267,8 @@ php artisan serve
 ```
 
 ### **Default Admin Account**
-- **Email:** ipul@tokobaju.com
-- **Password:** ipul12345
+- **Email:** admin@ruangbaju.com
+- **Password:** admin12345
 - **Role:** admin
 
 ### **Sample Products**

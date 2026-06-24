@@ -30,7 +30,7 @@ vendor/bin/pest --parallel                # parallel run
 vendor/bin/pint                           # Laravel Pint formatter
 ```
 
-Default seeded accounts: admin `ipul@tokobaju.com` / `ipul12345`, user `faruq@tokobaju.com` / `faruq1234`.
+Default seeded accounts: admin `admin@ruangbaju.com` / `admin12345`, user `faruq@ruangbaju.com` / `faruq1234`.
 
 ## Architecture
 

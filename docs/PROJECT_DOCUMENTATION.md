@@ -51,8 +51,8 @@ npm run dev              # Terminal 2
 ```
 
 **Default credentials:**
-- Admin: `ipul@tokobaju.com` / `ipul12345`
-- User: `faruq@tokobaju.com` / `faruq1234`
+- Admin: `admin@ruangbaju.com` / `admin12345`
+- User: `faruq@ruangbaju.com` / `faruq1234`
 
 ---
 
