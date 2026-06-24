@@ -128,6 +128,17 @@ class StoreSettings extends Page
     {
         $data = $this->form->getState();
 
+        // Fetch coordinates from Location table if city/province selected but lat/lng empty
+        if (empty($data['store_latitude']) && !empty($data['store_city']) && !empty($data['store_province'])) {
+            $location = Location::where('province', $data['store_province'])
+                ->where('city', $data['store_city'])
+                ->first();
+            if ($location) {
+                $data['store_latitude'] = $location->latitude;
+                $data['store_longitude'] = $location->longitude;
+            }
+        }
+
         $settings = StoreSetting::get();
         $settings->update($data);
 
