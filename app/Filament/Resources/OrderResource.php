@@ -150,6 +150,10 @@ class OrderResource extends Resource
                         Order::STATUS_SHIPPED => 'Pesanan akan dikirim menggunakan kurir: ' . ($record->courier ?? 'Belum dipilih') . '. Nomor resi akan digenerate otomatis.',
                         default => 'Status pesanan akan diperbarui.',
                     })
+                    ->modalSubmitActionLabel('Ya, Lanjutkan')
+                    ->modalCancelActionLabel('Batal')
+                    ->modalIcon(null)
+                    ->extraModalFooterActions([])
                     ->visible(fn (Order $record) => $record->canAdvance())
                     ->action(function (Order $record) {
                         // If advancing to shipped, auto-generate tracking
