@@ -17,7 +17,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {{-- Image --}}
         <div class="rounded-2xl overflow-hidden bg-gray-100 dark:bg-surface-800">
-            <img src="{{ asset('storage/' . $product->image) }}"
+            <img src="{{ (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) }}"
                  alt="{{ $product->name }}"
                  class="w-full h-[500px] object-cover"
                  onerror="this.src='https://via.placeholder.com/600x600?text=No+Image';">

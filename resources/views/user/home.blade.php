@@ -62,7 +62,7 @@
         @forelse ($products as $product)
             <div class="card group overflow-hidden">
                 <div class="aspect-[4/5] overflow-hidden">
-                    <img src="{{ asset('storage/' . $product->image) }}"
+                    <img src="{{ (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) }}"
                          alt="{{ $product->name }}"
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                          onerror="this.src='https://via.placeholder.com/400x500?text=No+Image';">

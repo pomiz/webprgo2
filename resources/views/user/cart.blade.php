@@ -40,7 +40,7 @@
 
                         {{-- Image --}}
                         <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-surface-800">
-                            <img src="{{ asset('storage/' . $item->product->image) }}"
+                            <img src="{{ (str_starts_with($item->product->image, 'http') ? $item->product->image : asset('storage/' . $item->product->image)) }}"
                                  alt="{{ $item->product->name }}"
                                  class="w-full h-full object-cover"
                                  onerror="this.src='https://via.placeholder.com/80x80?text=No+Image';">

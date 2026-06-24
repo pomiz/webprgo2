@@ -117,7 +117,7 @@
                     @foreach($cartItems as $item)
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-surface-800 flex-shrink-0">
-                                <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/48?text=No';">
+                                <img src="{{ (str_starts_with($item->product->image, 'http') ? $item->product->image : asset('storage/' . $item->product->image)) }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/48?text=No';">
                             </div>
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</p>
