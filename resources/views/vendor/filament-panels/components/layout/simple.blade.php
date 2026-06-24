@@ -36,7 +36,7 @@
         @endif
 
         <div
-            class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center"
+            class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center relative z-10"
         >
             <main
                 @class([
