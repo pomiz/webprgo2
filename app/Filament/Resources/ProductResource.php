@@ -75,10 +75,14 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
+                Tables\Columns\TextColumn::make('image')
                     ->label('Gambar')
-                    ->disk('public')
-                    ->circular(),
+                    ->formatStateUsing(fn (?string $state) => $state
+                        ? '<img src="' . e($state) . '" onerror="this.src=\'https://via.placeholder.com/40\'" style="width:40px;height:40px;object-fit:cover;border-radius:50%">'
+                        : '<div style="width:40px;height:40px;background:#eee;border-radius:50%"></div>')
+                    ->html()
+                    ->searchable(false)
+                    ->sortable(false),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Produk')
