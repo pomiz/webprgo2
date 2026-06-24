@@ -89,10 +89,14 @@ class StoreSettings extends Page
                             }),
 
                         TextInput::make('store_latitude')
-                            ->hidden(),
+                            ->label('Latitude')
+                            ->disabled()
+                            ->dehydrated(true),
 
                         TextInput::make('store_longitude')
-                            ->hidden(),
+                            ->label('Longitude')
+                            ->disabled()
+                            ->dehydrated(true),
                     ]),
 
                 Section::make('Tarif Ongkir')
