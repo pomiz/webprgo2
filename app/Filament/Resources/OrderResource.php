@@ -144,6 +144,12 @@ class OrderResource extends Resource
                         Order::STATUS_COMPLETED => 'success',
                         default => 'gray',
                     })
+                    ->requiresConfirmation()
+                    ->modalHeading(fn (Order $record) => 'Ubah status ke "' . Order::STATUSES[$record->next_status] . '"?')
+                    ->modalDescription(fn (Order $record) => match ($record->next_status) {
+                        Order::STATUS_SHIPPED => 'Kurir: ' . ($record->courier ?? 'Belum dipilih') . '. No resi akan digenerate otomatis.',
+                        default => 'Status pesanan akan diperbarui.',
+                    })
                     ->visible(fn (Order $record) => $record->canAdvance())
                     ->action(function (Order $record) {
                         // If advancing to shipped, auto-generate tracking
