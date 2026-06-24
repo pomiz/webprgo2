@@ -82,7 +82,6 @@ class KurirDashboard extends Page implements HasTable
                         Order::TRACKING_ARRIVED => 'success',
                         default => 'primary',
                     })
-                    ->requiresConfirmation()
                     ->modalHeading(fn (Order $record) => match ($record->tracking_status) {
                         Order::TRACKING_ARRIVED => 'Konfirmasi pesanan diterima?',
                         default => 'Lanjutkan tracking ke "' . (Order::TRACKING_STATUSES[$record->nextTrackingStep] ?? '') . '"?',
@@ -91,6 +90,15 @@ class KurirDashboard extends Page implements HasTable
                         Order::TRACKING_ARRIVED => 'Ini akan menyelesaikan pesanan secara otomatis.',
                         default => 'Status pengiriman akan diperbarui.',
                     })
+                    ->modalSubmitAction(fn (\Filament\Actions\StaticAction $action) => $action
+                        ->label('Ya, Lanjutkan')
+                        ->color(fn (Order $record) => match ($record->tracking_status) {
+                            Order::TRACKING_ARRIVED => 'success',
+                            default => 'primary',
+                        }))
+                    ->modalCancelAction(fn (\Filament\Actions\StaticAction $action) => $action
+                        ->label('Batal')
+                        ->color('gray'))
                     ->visible(fn (Order $record) => $record->canAdvanceTracking())
                     ->action(function (Order $record) {
                         $record->advanceTracking();
