@@ -147,7 +147,7 @@ class OrderResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading(fn (Order $record) => 'Ubah status ke "' . Order::STATUSES[$record->next_status] . '"?')
                     ->modalDescription(fn (Order $record) => match ($record->next_status) {
-                        Order::STATUS_SHIPPED => 'Pesanan akan dikirim menggunakan kurir: <strong>' . ($record->courier ?? 'Belum dipilih') . '</strong>. Nomor resi akan digenerate otomatis.',
+                        Order::STATUS_SHIPPED => 'Pesanan akan dikirim menggunakan kurir: ' . ($record->courier ?? 'Belum dipilih') . '. Nomor resi akan digenerate otomatis.',
                         default => 'Status pesanan akan diperbarui.',
                     })
                     ->visible(fn (Order $record) => $record->canAdvance())
